@@ -1,0 +1,12 @@
+<h1>Editing genome_position</h1>
+
+<% form_for(@genome_position) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @genome_position %> |
+<%= link_to 'Back', genome_positions_path %>

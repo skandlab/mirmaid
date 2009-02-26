@@ -1,0 +1,12 @@
+<h1>Editing precursor_family</h1>
+
+<% form_for(@precursor_family) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @precursor_family %> |
+<%= link_to 'Back', precursor_families_path %>

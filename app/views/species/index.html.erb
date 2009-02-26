@@ -1,0 +1,18 @@
+<h1>Listing species</h1>
+
+<table>
+  <tr>
+  </tr>
+
+<% for species in @species %>
+  <tr>
+    <td><%= link_to 'Show', species %></td>
+    <td><%= link_to 'Edit', edit_species_path(species) %></td>
+    <td><%= link_to 'Destroy', species, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New species', new_species_path %>

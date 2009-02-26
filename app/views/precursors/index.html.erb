@@ -1,0 +1,18 @@
+<h1>Listing precursors</h1>
+
+<table>
+  <tr>
+  </tr>
+
+<% for precursor in @precursors %>
+  <tr>
+    <td><%= link_to 'Show', precursor %></td>
+    <td><%= link_to 'Edit', edit_precursor_path(precursor) %></td>
+    <td><%= link_to 'Destroy', precursor, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New precursor', new_precursor_path %>

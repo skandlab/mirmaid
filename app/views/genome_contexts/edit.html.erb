@@ -1,0 +1,12 @@
+<h1>Editing genome_context</h1>
+
+<% form_for(@genome_context) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @genome_context %> |
+<%= link_to 'Back', genome_contexts_path %>

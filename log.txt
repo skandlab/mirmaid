@@ -1,0 +1,37 @@
+
+###
+### todo 
+###
+
+# define relationships in map.resources
+
+# Visualize ER model (rake task)
+
+
+### 
+### Completed
+###
+
+# Make REST test demo application
+
+# generate REST scaffolds
+
+ruby script/generate scaffold species
+ruby script/generate scaffold precursor
+ruby script/generate scaffold mature
+ruby script/generate scaffold precursor_family
+ruby script/generate scaffold genome_context
+ruby script/generate scaffold genome_position
+ruby script/generate scaffold paper
+ruby script/generate scaffold precursor_external_synonym
+
+# column datatypes:
+
+matures: from/to : string->integer
+
+# indexes
+
+# define relationships in app/models
+
+# matures->precursor, precursors->precursor-families many-one relationship
+
