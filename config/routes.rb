@@ -1,29 +1,24 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :precursor_external_synonyms, :has_one => :precursor
+  readonly = [:create, :new, :update, :destroy, :edit]
+  
+  map.resources :species, :has_many => [:precursors,:matures,:papers], :except => readonly
+  
+  map.resources :precursors, :has_one => [:precursor_family,:species], :has_many => [:matures,:papers,:genome_positions,:genome_contexts,:precursor_external_synonyms], :except => readonly
+  
+  map.resources :matures, :has_one => [:precursor,:species], :has_many => :papers, :except => readonly
+  
+  map.resources :precursor_families, :has_many => :precursors, :except => readonly
+    
+  map.resources :papers, :has_many => [:precursors, :species, :matures], :except => readonly
 
-  map.resources :papers, :has_many => :precursors
+  map.resources :genome_positions
 
-  map.resources :genome_positions, :has_one => :precursor
+  map.resources :genome_contexts
 
-  map.resources :genome_contexts, :has_one => :precursor
+  map.resources :precursor_external_synonyms
 
-  map.resources :precursor_families, :has_many => :precursors
-
-  map.resources :species, :has_may => :precursors
-
-  map.resources :precursors, :has_many => [:matures,:papers,:genome_positions,:genome_contexts,:precursor_external_synonyms], :has_one => [:precursor_family,:species]
-
-  map.resources :matures, :has_one => :precursor
 
   # The priority is based upon order of creation: first created -> highest priority.
-
-  # Sample of regular route:
-  #   map.connect 'products/:id', :controller => 'catalog', :action => 'view'
-  # Keep in mind you can assign values other than :controller and :action
-
-  # Sample of named route:
-  #   map.purchase 'products/:id/purchase', :controller => 'catalog', :action => 'purchase'
-  # This route can be invoked with purchase_url(:id => product.id)
 
   # Sample resource route (maps HTTP verbs to controller actions automatically):
   #   map.resources :products

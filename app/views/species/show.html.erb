@@ -1,3 +1,14 @@
 
-<%= link_to 'Edit', edit_species_path(@species) %> |
+<table>
+  <tr><th align=left>Abbreviation</th><td><%= @species.abbreviation %></td></tr>
+  <tr><th align=left>Name</th><td><%= @species.name %></td></tr>
+  <tr><th align=left>Division</th><td><%= @species.division %></td></tr>
+  <tr><th align=left>Taxonomy</th><td><%= @species.taxonomy %></td></tr>
+</table>
+
+<p>
+<%= @species.name %> has <%= link_to @species.precursors.size.to_s + " precursors", precursors_path(:species_id => @species.id) %> and <%= link_to @species.precursors.map{|x| x.matures.size}.sum.to_s + " matures", matures_path(:species_id => @species.id) %>.
+</p>
+
+
 <%= link_to 'Back', species_path %>

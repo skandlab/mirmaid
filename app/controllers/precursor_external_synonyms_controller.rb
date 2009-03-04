@@ -2,8 +2,15 @@ class PrecursorExternalSynonymsController < ApplicationController
   # GET /precursor_external_synonyms
   # GET /precursor_external_synonyms.xml
   def index
-    @precursor_external_synonyms = PrecursorExternalSynonym.find(:all)
+    @precursor_external_synonyms = nil
+    
+    if params[:precursor_id]
+      @precursor_external_synonyms = Precursor.find_rest(params[:precursor_id]).precursor_external_synonyms
+    else
+      @precursor_external_synonyms = PrecursorExternalSynonym.find(:all)
+    end
 
+    
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @precursor_external_synonyms }

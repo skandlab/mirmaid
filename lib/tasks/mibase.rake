@@ -88,6 +88,7 @@ namespace :mibase do
       sed = ""
       sed = "sed 's/`mature_from` varchar(4) default NULL,/`mature_from` int(4) default NULL,/'"
       sed += "| sed 's/`mature_to` varchar(4) default NULL,/`mature_to` int(4) default NULL,/'"
+      sed += "| sed 's/`sequence` blob,/`sequnce` longtext,/'"
       
       if (adapter == "postgresql") then
         psql = "psql -h #{host} -d #{database} -U #{username}"

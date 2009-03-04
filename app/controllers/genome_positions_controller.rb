@@ -2,8 +2,14 @@ class GenomePositionsController < ApplicationController
   # GET /genome_positions
   # GET /genome_positions.xml
   def index
-    @genome_positions = GenomePosition.find(:all)
-
+    @genome_positions = nil
+    
+    if params[:precursor_id]
+      @genome_positions = Precursor.find_rest(params[:precursor_id]).genome_positions
+    else
+      @genome_positions = GenomePosition.find(:all)
+    end
+    
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @genome_positions }

@@ -3,10 +3,17 @@
 ### todo 
 ###
 
-# define relationships in map.resources
+# define and test relationships in map.resources
+## ActiveResource
+## url's
 
 # Visualize ER model (rake task)
 
+# Document REST interface
+
+# Unit tests
+## internal tests
+## external rest demo tests
 
 ### 
 ### Completed
@@ -30,6 +37,7 @@ ruby script/generate scaffold precursor_external_synonym
 matures: from/to : string->integer
 
 # indexes
+## define indexes on REST names/ids
 
 # define relationships in app/models
 

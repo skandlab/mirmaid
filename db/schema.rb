@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(:version => 1) do
   end
 
   add_index "matures", ["id"], :name => "index_matures_on_id", :unique => true
+  add_index "matures", ["name"], :name => "index_matures_on_name"
   add_index "matures", ["precursor_id"], :name => "index_matures_on_precursor_id"
 
   create_table "mirna_target_links", :id => false, :force => true do |t|
@@ -77,6 +78,7 @@ ActiveRecord::Schema.define(:version => 1) do
   end
 
   add_index "papers", ["id"], :name => "index_papers_on_id", :unique => true
+  add_index "papers", ["medline"], :name => "index_papers_on_medline", :unique => true
 
   create_table "papers_precursors", :id => false, :force => true do |t|
     t.integer "precursor_id",              :default => 0, :null => false
@@ -120,13 +122,14 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string  "accession",           :limit => 9,   :default => "", :null => false
     t.string  "name",                :limit => 40,  :default => "", :null => false
     t.string  "description",         :limit => 100
-    t.binary  "sequence"
+    t.text    "sequnce"
     t.text    "comment"
     t.integer "species_id",                         :default => 0,  :null => false
     t.integer "precursor_family_id"
   end
 
   add_index "precursors", ["id"], :name => "index_precursors_on_id", :unique => true
+  add_index "precursors", ["name"], :name => "index_precursors_on_name", :unique => true
   add_index "precursors", ["precursor_family_id"], :name => "index_precursors_on_precursor_family_id"
 
   create_table "species", :force => true do |t|
@@ -138,6 +141,7 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string "ensembl_db",      :limit => 50
   end
 
+  add_index "species", ["abbreviation"], :name => "index_species_on_abbreviation", :unique => true
   add_index "species", ["id"], :name => "index_species_on_id", :unique => true
 
 end

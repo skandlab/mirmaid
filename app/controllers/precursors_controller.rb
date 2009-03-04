@@ -2,8 +2,18 @@ class PrecursorsController < ApplicationController
   # GET /precursors
   # GET /precursors.xml
   def index
-    @precursors = Precursor.find(:all)
-
+    @precursors = nil
+    
+    if params[:species_id]
+      @precursors = Species.find_rest(params[:species_id]).precursors
+    elsif params[:paper_id]
+      @precursors = Paper.find_rest(params[:paper_id]).precursors
+    elsif params[:precursor_family_id]
+      @precursors = PrecursorFamily.find_rest(params[:precursor_family_id]).precursors
+    else
+      @precursors = Precursor.find(:all)
+    end
+    
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @precursors }
@@ -13,14 +23,23 @@ class PrecursorsController < ApplicationController
   # GET /precursors/1
   # GET /precursors/1.xml
   def show
-    @precursor = Precursor.find(params[:id])
-
+    @precursor = nil
+    
+    if params[:mature_id]
+      @precursor = Mature.find_rest(params[:mature_id]).precursor
+    else
+      @precursor = Precursor.find_rest(params[:id])
+    end
+    
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @precursor }
     end
   end
 
+  
+  ### DISABLED
+  
   # GET /precursors/new
   # GET /precursors/new.xml
   def new

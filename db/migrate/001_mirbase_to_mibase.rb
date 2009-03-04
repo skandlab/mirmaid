@@ -108,11 +108,14 @@ class MirbaseToMibase < ActiveRecord::Migration
     puts "indexing ..."
     
     add_index :species, :id, :unique => true
+    add_index :species, :abbreviation, :unique => true
     
     add_index :precursors, :id, :unique => true
+    add_index :precursors, :name, :unique => true
     add_index :precursors, :precursor_family_id
 
     add_index :matures, :id, :unique => true
+    add_index :matures, :name
     add_index :matures, :precursor_id
     
     add_index :precursor_families, :id, :unique => true
@@ -122,6 +125,7 @@ class MirbaseToMibase < ActiveRecord::Migration
     add_index :genome_positions, :precursor_id
 
     add_index :papers, :id, :unique => true
+    add_index :papers, :medline, :unique => true
 
     add_index :precursor_external_synonyms, :precursor_id
 

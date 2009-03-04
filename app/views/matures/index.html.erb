@@ -6,13 +6,11 @@
 
 <% for mature in @matures %>
   <tr>
+    <td><%= mature.name %></td>
     <td><%= link_to 'Show', mature %></td>
-    <td><%= link_to 'Edit', edit_mature_path(mature) %></td>
-    <td><%= link_to 'Destroy', mature, :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
 <% end %>
 </table>
 
 <br />
 
-<%= link_to 'New mature', new_mature_path %>

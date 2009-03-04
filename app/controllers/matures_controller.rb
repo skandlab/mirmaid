@@ -5,7 +5,17 @@ class MaturesController < ApplicationController
   # GET /matures
   # GET /matures.xml
   def index
-    @matures = Mature.find(:all)
+    @matures = nil
+
+    if params[:precursor_id]
+      @matures = Precursor.find_rest(params[:precursor_id]).matures
+    elsif params[:species_id]
+      @matures = Species.find_rest(params[:species_id]).matures
+    elsif params[:paper_id]
+      @matures = Paper.find_rest(params[:paper_id]).matures
+    else
+      @matures = Mature.find(:all)
+    end
 
     respond_to do |format|
       format.html # index.html.erb
@@ -16,14 +26,16 @@ class MaturesController < ApplicationController
   # GET /matures/1
   # GET /matures/1.xml
   def show
-    @mature = Mature.find(params[:id])
+    @mature = Mature.find_rest(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @mature }
     end
   end
-
+  
+  ### DISABLED ...
+  
   # GET /matures/new
   # GET /matures/new.xml
   def new
@@ -85,4 +97,11 @@ class MaturesController < ApplicationController
       format.xml  { head :ok }
     end
   end
+  
+  #protected
+
+  #def find_precursor
+  #  Precursor.find()
+  #end
+ 
 end

@@ -1,13 +1,18 @@
 class SpeciesController < ApplicationController
-  
-  
+    
   #before_filter :find_precursors
 
   # GET /species
   # GET /species.xml
   def index
-    @species = Species.find(:all)
-
+    @species = nil
+    
+    if params[:paper_id]
+      @species = Paper.find_rest(params[:paper_id]).species
+    else
+      @species = Species.find(:all)
+    end
+    
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @species }
@@ -17,8 +22,16 @@ class SpeciesController < ApplicationController
   # GET /species/1
   # GET /species/1.xml
   def show
-    @species = Species.find(params[:id])
-
+    @species = nil
+    
+    if params[:precursor_id]
+      @species = Precursor.find_rest(params[:precursor_id]).species
+    elsif params[:mature_id]
+      @species = Mature.find_rest(params[:mature_id]).precursor.species
+    else
+      @species = Species.find_rest(params[:id])
+    end
+    
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @species }
