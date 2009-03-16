@@ -5,7 +5,7 @@ require 'progressbar'
 require 'config/environment'
 
 #Settings
-mirbase_version = "CURRENT" # specify version
+mirbase_version = "13.0" # specify version
 # specify location of mirbase is available locally
 # the database files have to be unzipped!
 mirbase_dir   = "/data1/genome_seq/mirbase/mirror"
@@ -57,12 +57,12 @@ namespace :mibase do
       end
     end
 
-    desc 'Drops, creates, migrates and loads data for the database defined by RAILS_ENV.'
-    task :reset => [
-      'mibase:db:drop',
-      'mibase:db:create',
-      'mibase:load:mirbase',
-      'db:migrate']
+    desc 'Drop, create, migrate, load and test data for the database defined by RAILS_ENV.'
+    task :reset => ['mibase:db:drop',
+                    'mibase:db:create',
+                    'mibase:load:mirbase',
+                    'db:migrate',
+                    'mibase:test:units']
 
   end # :db
   
@@ -88,7 +88,7 @@ namespace :mibase do
       sed = ""
       sed = "sed 's/`mature_from` varchar(4) default NULL,/`mature_from` int(4) default NULL,/'"
       sed += "| sed 's/`mature_to` varchar(4) default NULL,/`mature_to` int(4) default NULL,/'"
-      sed += "| sed 's/`sequence` blob,/`sequnce` longtext,/'"
+      sed += "| sed 's/`sequence` blob,/`sequence` longtext,/'"
       
       if (adapter == "postgresql") then
         psql = "psql -h #{host} -d #{database} -U #{username}"

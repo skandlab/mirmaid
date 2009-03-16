@@ -16,6 +16,13 @@ class Species < ActiveRecord::Base
   def matures
     Precursor.find_all_by_species_id(self.id,:include => :matures).map{|x| x.matures}.flatten.uniq
   end
-
+  
+  def seed_families
+    Precursor.find_all_by_species_id(self.id,:include => {:matures => :seed_families}).map{|x| x.matures}.flatten.uniq.map{|x| x.seed_families}.flatten
+  end
+  
+  def precursor_clusters
+    Precursor.find_all_by_species_id(self.id,:include => :precursor_clusters).map{|x| x.precursor_clusters}.flatten
+  end
   
 end

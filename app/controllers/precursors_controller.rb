@@ -10,6 +10,8 @@ class PrecursorsController < ApplicationController
       @precursors = Paper.find_rest(params[:paper_id]).precursors
     elsif params[:precursor_family_id]
       @precursors = PrecursorFamily.find_rest(params[:precursor_family_id]).precursors
+    elsif params[:precursor_cluster_id]
+      @precursors = PrecursorCluster.find_rest(params[:precursor_cluster_id]).precursors
     else
       @precursors = Precursor.find(:all)
     end

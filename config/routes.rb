@@ -1,16 +1,24 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :precursor_clusters
+
+  map.resources :seed_families
+
   readonly = [:create, :new, :update, :destroy, :edit]
   
   map.resources :species, :has_many => [:precursors,:matures,:papers], :except => readonly
   
-  map.resources :precursors, :has_one => [:precursor_family,:species], :has_many => [:matures,:papers,:genome_positions,:genome_contexts,:precursor_external_synonyms], :except => readonly
+  map.resources :precursors, :has_one => [:precursor_family,:species], :has_many => [:matures,:papers,:genome_positions,:genome_contexts,:precursor_external_synonyms,:precursor_clusters], :except => readonly
   
-  map.resources :matures, :has_one => [:precursor,:species], :has_many => :papers, :except => readonly
+  map.resources :matures, :has_one => [:precursor,:species], :has_many => [:papers,:seed_families], :except => readonly
   
   map.resources :precursor_families, :has_many => :precursors, :except => readonly
     
   map.resources :papers, :has_many => [:precursors, :species, :matures], :except => readonly
-
+  
+  map.resources :seed_families, :has_many => [:matures]
+  
+  map.resources :precursor_clusters, :has_many => [:precursors]
+  
   map.resources :genome_positions
 
   map.resources :genome_contexts

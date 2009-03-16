@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(:version => 1) do
 
   add_index "genome_contexts", ["precursor_id"], :name => "index_genome_contexts_on_precursor_id"
 
-  create_table "genome_positions", :id => false, :force => true do |t|
+  create_table "genome_positions", :force => true do |t|
     t.integer "precursor_id",               :default => 0, :null => false
     t.string  "xsome",        :limit => 20
     t.integer "contig_start", :limit => 8
@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(:version => 1) do
   end
 
   add_index "genome_positions", ["precursor_id"], :name => "index_genome_positions_on_precursor_id"
+  add_index "genome_positions", ["xsome"], :name => "index_genome_positions_on_xsome"
 
   create_table "matures", :force => true do |t|
     t.string  "name",         :limit => 40, :default => "", :null => false
@@ -55,6 +56,14 @@ ActiveRecord::Schema.define(:version => 1) do
   add_index "matures", ["id"], :name => "index_matures_on_id", :unique => true
   add_index "matures", ["name"], :name => "index_matures_on_name"
   add_index "matures", ["precursor_id"], :name => "index_matures_on_precursor_id"
+
+  create_table "matures_seed_families", :id => false, :force => true do |t|
+    t.integer "mature_id"
+    t.integer "seed_family_id"
+  end
+
+  add_index "matures_seed_families", ["mature_id"], :name => "index_matures_seed_families_on_mature_id"
+  add_index "matures_seed_families", ["seed_family_id"], :name => "index_matures_seed_families_on_seed_family_id"
 
   create_table "mirna_target_links", :id => false, :force => true do |t|
     t.integer "auto_mature",  :default => 0, :null => false
@@ -87,7 +96,8 @@ ActiveRecord::Schema.define(:version => 1) do
     t.integer "order_added",  :limit => 2
   end
 
-  add_index "papers_precursors", ["paper_id", "precursor_id"], :name => "index_papers_precursors_on_precursor_id_and_paper_id"
+  add_index "papers_precursors", ["paper_id"], :name => "index_papers_precursors_on_paper_id"
+  add_index "papers_precursors", ["precursor_id"], :name => "index_papers_precursors_on_precursor_id"
 
   create_table "precfams", :id => false, :force => true do |t|
     t.integer "precfam_id",          :default => 0, :null => false
@@ -98,6 +108,23 @@ ActiveRecord::Schema.define(:version => 1) do
     t.integer "precursor_id",  :default => 0, :null => false
     t.integer "precmature_id", :default => 0, :null => false
   end
+
+  create_table "precursor_clusters", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "precursor_clusters", ["id"], :name => "index_precursor_clusters_on_id", :unique => true
+  add_index "precursor_clusters", ["name"], :name => "index_precursor_clusters_on_name", :unique => true
+
+  create_table "precursor_clusters_precursors", :id => false, :force => true do |t|
+    t.integer "precursor_id"
+    t.integer "precursor_cluster_id"
+  end
+
+  add_index "precursor_clusters_precursors", ["precursor_cluster_id"], :name => "index_precursor_clusters_precursors_on_precursor_cluster_id"
+  add_index "precursor_clusters_precursors", ["precursor_id"], :name => "index_precursor_clusters_precursors_on_precursor_id"
 
   create_table "precursor_external_synonyms", :id => false, :force => true do |t|
     t.integer "precursor_id", :default => 0, :null => false
@@ -122,7 +149,7 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string  "accession",           :limit => 9,   :default => "", :null => false
     t.string  "name",                :limit => 40,  :default => "", :null => false
     t.string  "description",         :limit => 100
-    t.text    "sequnce"
+    t.text    "sequence"
     t.text    "comment"
     t.integer "species_id",                         :default => 0,  :null => false
     t.integer "precursor_family_id"
@@ -131,6 +158,17 @@ ActiveRecord::Schema.define(:version => 1) do
   add_index "precursors", ["id"], :name => "index_precursors_on_id", :unique => true
   add_index "precursors", ["name"], :name => "index_precursors_on_name", :unique => true
   add_index "precursors", ["precursor_family_id"], :name => "index_precursors_on_precursor_family_id"
+  add_index "precursors", ["species_id"], :name => "index_precursors_on_species_id"
+
+  create_table "seed_families", :force => true do |t|
+    t.string   "name"
+    t.string   "sequence"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "seed_families", ["id"], :name => "index_seed_families_on_id", :unique => true
+  add_index "seed_families", ["name"], :name => "index_seed_families_on_name", :unique => true
 
   create_table "species", :force => true do |t|
     t.string "abbreviation",    :limit => 10

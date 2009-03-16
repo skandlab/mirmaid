@@ -1,19 +1,12 @@
 
 ###
-### todo 
+### TODO
 ###
 
-# define and test relationships in map.resources
-## ActiveResource
-## url's
+# TODO: REST ...
+## external rest demo tests (OK - mibase_test_demo)
+## RESTu rl's
 
-# Visualize ER model (rake task)
-
-# Document REST interface
-
-# Unit tests
-## internal tests
-## external rest demo tests
 
 ### 
 ### Completed
@@ -31,6 +24,8 @@ ruby script/generate scaffold genome_context
 ruby script/generate scaffold genome_position
 ruby script/generate scaffold paper
 ruby script/generate scaffold precursor_external_synonym
+ruby script/generate scaffold seed_family 
+ruby script/generate scaffold precursor_cluster
 
 # column datatypes:
 
@@ -43,3 +38,19 @@ matures: from/to : string->integer
 
 # matures->precursor, precursors->precursor-families many-one relationship
 
+# define and test relationships in map.resources
+# Document REST interface, in mibase_rest_demo
+
+# new data resources
+** SeedFamily
+** PrecursorCluster
+## seed_family name: species-seedseq, (so you can get 7mer seed families, and
+## shifted 6mer families) 
+## precursor_cluster name : precursorname-1/10/100kb
+
+# Visualize ER model (rake task)
+## models2png/svg > file, controllers2svg/png > file
+
+# Unit tests
+## basic internal unit tests completed for all models
+## run with 'rake mibase:test:units'

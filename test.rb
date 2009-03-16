@@ -1,1 +1,0 @@
-Mature.find(:first)

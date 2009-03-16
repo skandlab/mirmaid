@@ -13,6 +13,8 @@ class MaturesController < ApplicationController
       @matures = Species.find_rest(params[:species_id]).matures
     elsif params[:paper_id]
       @matures = Paper.find_rest(params[:paper_id]).matures
+    elsif params[:seed_family_id]
+      @matures = SeedFamily.find_rest(params[:seed_family_id]).matures
     else
       @matures = Mature.find(:all)
     end
