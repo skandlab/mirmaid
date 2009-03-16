@@ -1,0 +1,18 @@
+<h1>Listing seed_families</h1>
+
+<table>
+  <tr>
+  </tr>
+
+<% for seed_family in @seed_families %>
+  <tr>
+    <td><%= link_to 'Show', seed_family %></td>
+    <td><%= link_to 'Edit', edit_seed_family_path(seed_family) %></td>
+    <td><%= link_to 'Destroy', seed_family, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New seed_family', new_seed_family_path %>

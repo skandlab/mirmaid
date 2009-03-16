@@ -1,0 +1,12 @@
+<h1>Editing precursor_cluster</h1>
+
+<% form_for(@precursor_cluster) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @precursor_cluster %> |
+<%= link_to 'Back', precursor_clusters_path %>

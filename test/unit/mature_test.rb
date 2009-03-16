@@ -1,3 +1,19 @@
+# == Schema Information
+# Schema version: 1
+#
+# Table name: matures
+#
+#  id           :integer         not null, primary key
+#  name         :string(40)      default(""), not null
+#  accession    :string(20)      default(""), not null
+#  mature_from  :integer
+#  mature_to    :integer
+#  evidence     :text
+#  experiment   :text
+#  similarity   :text
+#  precursor_id :integer
+#
+
 require 'test_helper'
 
 class MatureTest < ActiveSupport::TestCase

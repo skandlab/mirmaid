@@ -1,3 +1,18 @@
+# == Schema Information
+# Schema version: 1
+#
+# Table name: precursors
+#
+#  id                  :integer         not null, primary key
+#  accession           :string(9)       default(""), not null
+#  name                :string(40)      default(""), not null
+#  description         :string(100)
+#  sequence            :text
+#  comment             :text
+#  species_id          :integer         default(0), not null
+#  precursor_family_id :integer
+#
+
 require 'test_helper'
 
 class PrecursorTest < ActiveSupport::TestCase

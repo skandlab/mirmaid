@@ -1,3 +1,15 @@
+# == Schema Information
+# Schema version: 1
+#
+# Table name: papers
+#
+#  id      :integer         not null, primary key
+#  medline :integer
+#  title   :string(255)
+#  author  :string(255)
+#  journal :string(255)
+#
+
 class Paper < ActiveRecord::Base
 
   has_and_belongs_to_many :precursors

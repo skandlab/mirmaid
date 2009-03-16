@@ -1,3 +1,5 @@
 config/database.yml
 tmp/*
 log/*
+models.*
+log.txt

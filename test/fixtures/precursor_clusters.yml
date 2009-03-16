@@ -1,13 +1,12 @@
 # == Schema Information
 # Schema version: 1
 #
-# Table name: papers
+# Table name: precursor_clusters
 #
-#  id      :integer         not null, primary key
-#  medline :integer
-#  title   :string(255)
-#  author  :string(255)
-#  journal :string(255)
+#  id         :integer         not null, primary key
+#  name       :string(255)
+#  created_at :datetime
+#  updated_at :datetime
 #
 
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html

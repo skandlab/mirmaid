@@ -1,3 +1,14 @@
+# == Schema Information
+# Schema version: 1
+#
+# Table name: precursor_families
+#
+#  id          :integer         not null, primary key
+#  accession   :string(15)      default(""), not null
+#  name        :string(40)      default(""), not null
+#  description :text
+#
+
 require 'test_helper'
 
 class PrecursorFamilyTest < ActiveSupport::TestCase

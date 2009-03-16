@@ -1,0 +1,12 @@
+<h1>Editing seed_family</h1>
+
+<% form_for(@seed_family) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @seed_family %> |
+<%= link_to 'Back', seed_families_path %>
