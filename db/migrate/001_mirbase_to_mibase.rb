@@ -29,6 +29,7 @@ class MirbaseToMibase < ActiveRecord::Migration
     rename_column :matures, :mature_name, :name
     rename_column :matures, :mature_acc, :accession
     add_column :matures, :precursor_id, :integer
+    add_column :matures, :sequence, :string
                 
     # precursor_families ok
       
@@ -62,46 +63,7 @@ class MirbaseToMibase < ActiveRecord::Migration
     rename_table :mirna_literature_references, :papers_precursors
     rename_column :papers_precursors, :auto_mirna, :precursor_id
     rename_column :papers_precursors, :auto_lit, :paper_id
-        
-    # precursor > precursor_families
-    # we take the mirbase precursor<->precursor_family many-many mapping and
-    # makes it many-one.
-    # As of miRBase 12.0, there are no precursors with multiple
-    # families - meaning that precursor_id in precfams is unique
-    
-    rename_table :mirna_2_prefam, :precfams
-    rename_column :precfams, :auto_mirna, :precfam_id
-    rename_column :precfams, :auto_prefam, :precursor_family_id
-
-    puts "##### precursor <-> precursor families"
-    pbar = ProgressBar.new("progress",Precfam.count)
-    Precfam.find(:all).each do |pf|
-      p = pf.precursor
-      p.precursor_family = pf.precursor_family
-      p.save
-      pbar.inc
-    end
-    pbar.finish
-    
-    # precursor < matures
-    # we take the mirbase precursor<->mature many-many mapping and
-    # makes it one-many.
-    # As of miRBase 12.0, there are no matures with multiple
-    # precursors - meaning that mature_id in :precmatures is unique
-    rename_table :mirna_pre_mature, :precmatures
-    rename_column :precmatures, :auto_mirna, :precursor_id
-    rename_column :precmatures, :auto_mature, :precmature_id
-
-    puts "##### matures <-> precursor"
-    pbar = ProgressBar.new("progress",Precmature.count)
-    Precmature.find(:all).each do |pm|
-      m = pm.mature
-      m.precursor = pm.precursor
-      m.save
-      pbar.inc
-    end
-    pbar.finish
-
+  
     # Indexes
     puts "##### indexing ..."
     
@@ -111,11 +73,9 @@ class MirbaseToMibase < ActiveRecord::Migration
     add_index :precursors, :id, :unique => true
     add_index :precursors, :name, :unique => true
     add_index :precursors, :species_id
-    add_index :precursors, :precursor_family_id
-
+    
     add_index :matures, :id, :unique => true
     add_index :matures, :name
-    add_index :matures, :precursor_id
     
     add_index :precursor_families, :id, :unique => true
 
@@ -131,8 +91,35 @@ class MirbaseToMibase < ActiveRecord::Migration
 
     add_index :papers_precursors, :precursor_id
     add_index :papers_precursors, :paper_id
+       
+    puts "##### precursor <-> precursor families"
+    # precursor > precursor_families
+    # we take the mirbase precursor<->precursor_family many-many mapping and
+    # makes it many-one.
+    # As of miRBase 12.0, there are no precursors with multiple
+    # families - meaning that precursor_id in precfams is unique
+    
+    ActiveRecord::Base::connection().update("update precursors \
+                                  set precursor_family_id = (select max(auto_prefam) from mirna_2_prefam where precursors.id = auto_mirna) \ 
+                                  where exists (select 1 from mirna_2_prefam where precursors.id = auto_mirna)")
+    
+    add_index :precursors, :precursor_family_id
+    
+    puts "##### matures <-> precursor"
+    # precursor < matures
+    # we take the mirbase precursor<->mature many-many mapping and
+    # makes it one-many.
+    # As of miRBase 12.0, there are no matures with multiple
+    # precursors - meaning that mature_id in :precmatures is unique
+
+    ActiveRecord::Base::connection().update("update matures \
+                                  set precursor_id = (select max(auto_mirna) from mirna_pre_mature where matures.id = auto_mature) \ 
+                                  where exists (select 1 from mirna_pre_mature where matures.id = auto_mature)")
+        
+    add_index :matures, :precursor_id
     
     # seed families
+    # and store mature sequence
     puts "##### seed families"
     create_table :seed_families do |t|
       t.column "name", :string
@@ -148,8 +135,11 @@ class MirbaseToMibase < ActiveRecord::Migration
     add_index :seed_families, :name, :unique => true
     
     pbar = ProgressBar.new("progress",Species.count)    
-    Species.find(:all).each do |sp|
+    Species.find_each(:batch_size => 10) do |sp|
       sp.matures.each do |mat|
+        mat.sequence = mat.get_sequence
+        mat.name = mat.name.gsub('.','-') # i.e. mmu-miR-1982.1
+        mat.save
         [1..7,1..6,2..7].each do |srange|
           seq = mat.sequence[srange]
           seedname = "#{sp.abbreviation}-#{seq}"
@@ -178,7 +168,7 @@ class MirbaseToMibase < ActiveRecord::Migration
     end
 
     pbar = ProgressBar.new("progress",Precursor.count)    
-    Precursor.find(:all,:include=>[:genome_positions]).each do |p|
+    Precursor.find_each(:include=>:genome_positions) do |p|
       pbar.inc
       [1,10,100].each do |kb|
         dist = 1*1000

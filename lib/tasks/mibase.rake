@@ -56,15 +56,38 @@ namespace :mibase do
         system "dropdb -h #{config['host']} #{config['database']}" or raise('DB could not be dropped')
       end
     end
+    
+    desc 'Create, migrate, load and test data for the database defined by RAILS_ENV.'
+    task :load => [ 'mibase:db:create',
+                    'mibase:load:mirbase',
+                    'db:migrate',
+                    'mibase:ferret:index',
+                    'mibase:test:units']
 
-    desc 'Drop, create, migrate, load and test data for the database defined by RAILS_ENV.'
+    
+    desc 'Drop and load the database defined by RAILS_ENV.'
     task :reset => ['mibase:db:drop',
                     'mibase:db:create',
                     'mibase:load:mirbase',
                     'db:migrate',
+                    'mibase:ferret:index',
                     'mibase:test:units']
 
   end # :db
+
+  namespace :ferret do
+    
+    desc "[1] (re)builds ferret indexes"
+    task :index  => :environment do
+
+      puts "(Re)building ferret indexes"
+      models = [Species,Precursor,Mature]
+      models.each do |m|
+        puts m.name
+        m.rebuild_index
+      end
+    end
+  end
   
   namespace :load do
 
@@ -83,6 +106,8 @@ namespace :mibase do
       puts db_config[RAILS_ENV].to_yaml
       
       raise "error reading #{mirbase_data} txt.files, remember to unzip files" if Dir["#{mirbase_data}*.txt"].size <= 10
+
+      File.copy(mirbase_data+"../README",RAILS_ROOT+"/public/MIRBASE_README")
       
       # make initial schema changes
       sed = ""

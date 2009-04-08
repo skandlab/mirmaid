@@ -1,6 +1,6 @@
 class SpeciesController < ApplicationController
-    
-  #before_filter :find_precursors
+  layout "application"
+  protect_from_forgery :only => [:create, :update, :destroy]
 
   # GET /species
   # GET /species.xml
@@ -9,16 +9,32 @@ class SpeciesController < ApplicationController
     
     if params[:paper_id]
       @species = Paper.find_rest(params[:paper_id]).species
-    else
-      @species = Species.find(:all)
     end
     
+    if !params[:format] || params[:format] == "html"
+      params[:page] ||= 1
+      @query = (params[:search] && params[:search][:query]) ? params[:search][:query] : ""
+    
+      if @query != ""
+        @query = @query.split(' ').map{|x| x+"*"}.join(' ')
+        @species = Species.find_with_ferret(@query, :page => params[:page], :per_page => 12,:sort => :taxonomy_for_sort,:lazy=>true)
+      else
+        if @species # subselect
+          @species = Species.paginate @species.map{|x| x.id}, :page => params[:page], :per_page => 12, :order => :taxonomy
+        else #all
+          @species = Species.paginate :page => params[:page], :per_page => 12, :order => :taxonomy
+        end
+      end
+    else # xml
+      @species = Species.find(:all) if !@species
+    end
+        
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @species }
     end
   end
-
+  
   # GET /species/1
   # GET /species/1.xml
   def show
@@ -37,66 +53,10 @@ class SpeciesController < ApplicationController
       format.xml  { render :xml => @species }
     end
   end
-
-  # GET /species/new
-  # GET /species/new.xml
-  def new
-    @species = Species.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @species }
-    end
+  
+  def auto_complete_for_search_query
+    @species = Species.find_with_ferret(params["search"]["query"]+"*", :limit => 5, :lazy=>true, :sort => :name_for_sort)
+    render :partial => "search_results"
   end
-
-  # GET /species/1/edit
-  def edit
-    @species = Species.find(params[:id])
-  end
-
-  # POST /species
-  # POST /species.xml
-  def create
-    @species = Species.new(params[:species])
-
-    respond_to do |format|
-      if @species.save
-        flash[:notice] = 'Species was successfully created.'
-        format.html { redirect_to(@species) }
-        format.xml  { render :xml => @species, :status => :created, :location => @species }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @species.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
-  # PUT /species/1
-  # PUT /species/1.xml
-  def update
-    @species = Species.find(params[:id])
-
-    respond_to do |format|
-      if @species.update_attributes(params[:species])
-        flash[:notice] = 'Species was successfully updated.'
-        format.html { redirect_to(@species) }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @species.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /species/1
-  # DELETE /species/1.xml
-  def destroy
-    @species = Species.find(params[:id])
-    @species.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(species_url) }
-      format.xml  { head :ok }
-    end
-  end
+  
 end

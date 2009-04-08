@@ -1,0 +1,5 @@
+<ul>
+  <% for precursor in @precursors %>
+  <li><%= link_to precursor.name, precursor_url(precursor.name) %></li>
+  <% end %>
+</ul>

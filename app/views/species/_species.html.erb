@@ -1,0 +1,5 @@
+<tr class="<%= cycle("even","odd") %>">
+  <td><%= link_to species.abbreviation, species_url(species.abbreviation) %></td>
+  <td><%= species.highlight(@query, :field => :name) %></td>
+  <td><%= species.highlight(@query, :field => :taxonomy) %></td>
+</tr>

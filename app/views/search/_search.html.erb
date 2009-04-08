@@ -1,0 +1,13 @@
+<tr class="<%= cycle("even","odd") %>">
+<td><%= object.class_name %></td>
+  <% case object.class_name
+           when 'Species' %>
+  <td><%= link_to object.name, species_url(object.abbreviation) %></td>
+      <%   when 'Mature' %>
+  <td><%= link_to object.name, mature_url(object.name) %></td>
+      <%   when 'Precursor' %>
+  <td><%= link_to object.name, precursor_url(object.name) %></td>
+  <%   else %>
+  <td><%= object.class%></td>
+  <% end %>
+</tr>

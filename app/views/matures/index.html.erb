@@ -1,16 +1,20 @@
-<h1>Listing matures</h1>
+<div id="col-top"></div>    
+<div id="col" class="box">
 
-<table>
-  <tr>
-  </tr>
+<h3>Listing matures</h3>
 
-<% for mature in @matures %>
-  <tr>
-    <td><%= mature.name %></td>
-    <td><%= link_to 'Show', mature %></td>
-  </tr>
+<% form_tag({:action => :index}, :method => :get) do %>
+<%= render :partial=>"matures/search_pane" %>
+<%= submit_tag 'Search' %>
+<img id='search_spinner' src='/images/spinner.gif'  style='display:none;'/>
 <% end %>
+<br>  
+<%= will_paginate @matures, :params => params %>
+
+<table class="search">
+  <tr><th>mature</th><th>sequence</th><th>evidence</th><th>experiment</th><tr>
+  <%= render :partial => 'mature', :collection => @matures %>
 </table>
 
-<br />
-
+</div> <!-- /col -->
+<div id="col-bottom"></div>

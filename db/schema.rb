@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(:version => 1) do
     t.text    "experiment"
     t.text    "similarity"
     t.integer "precursor_id"
+    t.string  "sequence"
   end
 
   add_index "matures", ["id"], :name => "index_matures_on_id", :unique => true
@@ -64,6 +65,16 @@ ActiveRecord::Schema.define(:version => 1) do
 
   add_index "matures_seed_families", ["mature_id"], :name => "index_matures_seed_families_on_mature_id"
   add_index "matures_seed_families", ["seed_family_id"], :name => "index_matures_seed_families_on_seed_family_id"
+
+  create_table "mirna_2_prefam", :id => false, :force => true do |t|
+    t.integer "auto_mirna",  :default => 0, :null => false
+    t.integer "auto_prefam", :default => 0, :null => false
+  end
+
+  create_table "mirna_pre_mature", :id => false, :force => true do |t|
+    t.integer "auto_mirna",  :default => 0, :null => false
+    t.integer "auto_mature", :default => 0, :null => false
+  end
 
   create_table "mirna_target_links", :id => false, :force => true do |t|
     t.integer "auto_mature",  :default => 0, :null => false
@@ -99,20 +110,8 @@ ActiveRecord::Schema.define(:version => 1) do
   add_index "papers_precursors", ["paper_id"], :name => "index_papers_precursors_on_paper_id"
   add_index "papers_precursors", ["precursor_id"], :name => "index_papers_precursors_on_precursor_id"
 
-  create_table "precfams", :id => false, :force => true do |t|
-    t.integer "precfam_id",          :default => 0, :null => false
-    t.integer "precursor_family_id", :default => 0, :null => false
-  end
-
-  create_table "precmatures", :id => false, :force => true do |t|
-    t.integer "precursor_id",  :default => 0, :null => false
-    t.integer "precmature_id", :default => 0, :null => false
-  end
-
   create_table "precursor_clusters", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string "name"
   end
 
   add_index "precursor_clusters", ["id"], :name => "index_precursor_clusters_on_id", :unique => true
@@ -161,10 +160,8 @@ ActiveRecord::Schema.define(:version => 1) do
   add_index "precursors", ["species_id"], :name => "index_precursors_on_species_id"
 
   create_table "seed_families", :force => true do |t|
-    t.string   "name"
-    t.string   "sequence"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string "name"
+    t.string "sequence"
   end
 
   add_index "seed_families", ["id"], :name => "index_seed_families_on_id", :unique => true

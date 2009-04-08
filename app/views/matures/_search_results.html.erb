@@ -1,0 +1,5 @@
+<ul>
+  <% for mature in @matures %>
+  <li><%= link_to mature.name, mature_url(mature.name) %></li>
+  <% end %>
+</ul>

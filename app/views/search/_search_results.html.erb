@@ -1,0 +1,14 @@
+<ul>
+  <% for object in @objects %>
+  <% case object.class_name
+           when 'Species' %>
+  <li><%= link_to object.name, species_url(object.abbreviation) %></li>
+      <%   when 'Mature' %>
+  <li><%= link_to object.name, mature_url(object.name) %></li>
+      <%   when 'Precursor' %>
+  <li><%= link_to object.name, precursor_url(object.name) %></li>
+      <%   else %>
+        <li><%= object.class%></li>
+  <% end %>
+  <% end %>
+</ul>

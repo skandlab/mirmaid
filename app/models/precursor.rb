@@ -23,6 +23,19 @@ class Precursor < ActiveRecord::Base
   has_and_belongs_to_many :papers
   has_many :precursor_external_synonyms
 
+  acts_as_ferret :fields => {
+    :name => {:store => :yes, :boost => 4, :index => :untokenized},
+    :name_for_sort => {:index => :untokenized},
+    :comment => {:store => :yes},
+    :mature_names => {:store => :yes, :boost => 2},
+    :xsome => {:store => :yes},
+    :contig_start => {:store => :yes}
+  }, :store_class_name => 'true'
+
+  def name_for_sort
+    self.name
+  end
+  
   def self.find_rest(id)
     if id.to_s.chomp =~ /\D/
       self.find_by_name(id)
@@ -30,7 +43,21 @@ class Precursor < ActiveRecord::Base
       self.find(id.to_i)
     end
   end
+  
+  def mature_names
+    self.matures.map{|x| x.name}.join(', ')
+  end
 
+  def xsome
+    p = self.genome_positions.first
+    p.nil? ? "NA" : p.xsome
+  end
+
+  def contig_start
+    p = self.genome_positions.first
+    p.nil? ? "NA" : p.contig_start
+  end
+  
   def nearby_precursors(dist=10000)
     posa = self.genome_positions
     neighbours = []

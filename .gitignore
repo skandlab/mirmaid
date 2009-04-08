@@ -3,3 +3,6 @@ tmp/*
 log/*
 models.*
 log.txt
+index/*
+public/MIRBASE_README
+tempbuffer

@@ -1,8 +1,4 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :precursor_clusters
-
-  map.resources :seed_families
-
   readonly = [:create, :new, :update, :destroy, :edit]
   
   map.resources :species, :has_many => [:precursors,:matures,:papers], :except => readonly
@@ -15,15 +11,15 @@ ActionController::Routing::Routes.draw do |map|
     
   map.resources :papers, :has_many => [:precursors, :species, :matures], :except => readonly
   
-  map.resources :seed_families, :has_many => [:matures]
+  map.resources :seed_families, :has_many => [:matures], :except => readonly
   
-  map.resources :precursor_clusters, :has_many => [:precursors]
+  map.resources :precursor_clusters, :has_many => [:precursors], :except => readonly
   
-  map.resources :genome_positions
+  map.resources :genome_positions, :except => readonly
 
-  map.resources :genome_contexts
+  map.resources :genome_contexts, :except => readonly
 
-  map.resources :precursor_external_synonyms
+  map.resources :precursor_external_synonyms, :except => readonly
 
 
   # The priority is based upon order of creation: first created -> highest priority.
@@ -50,7 +46,7 @@ ActionController::Routing::Routes.draw do |map|
   #   end
 
   # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
-  # map.root :controller => "welcome"
+  map.root :controller => "home"
 
   # See how all your routes lay out with "rake routes"
 

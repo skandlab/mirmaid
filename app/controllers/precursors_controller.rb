@@ -1,8 +1,14 @@
 class PrecursorsController < ApplicationController
+  layout "application"
+  protect_from_forgery :only => [:create, :update, :destroy]
+  
   # GET /precursors
   # GET /precursors.xml
   def index
     @precursors = nil
+    
+    params[:page] ||= 1
+    @query = (params[:search] && params[:search][:query]) ? params[:search][:query] : ""
     
     if params[:species_id]
       @precursors = Species.find_rest(params[:species_id]).precursors
@@ -12,10 +18,26 @@ class PrecursorsController < ApplicationController
       @precursors = PrecursorFamily.find_rest(params[:precursor_family_id]).precursors
     elsif params[:precursor_cluster_id]
       @precursors = PrecursorCluster.find_rest(params[:precursor_cluster_id]).precursors
-    else
-      @precursors = Precursor.find(:all)
     end
     
+    if !params[:format] || params[:format] == "html"
+      params[:page] ||= 1
+      @query = (params[:search] && params[:search][:query]) ? params[:search][:query] : ""
+    
+      if @query != ""
+        @query = @query.split(' ').map{|x| x+"*"}.join(' ')
+        @precursors = Precursor.find_with_ferret(@query, :page => params[:page], :per_page => 12, :sort => :name_for_sort,:lazy=>true)
+      else
+        if @precursors # subselect
+          @precursors = Precursor.paginate @precursors.map{|x| x.id}, :page => params[:page], :per_page => 12, :order => :name
+        else #all
+          @precursors = Precursor.paginate :page => params[:page], :per_page => 12, :order => :name
+        end
+      end
+    else # xml
+      @precursors = Precursor.find(:all) if !@precursors
+    end
+      
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @precursors }
@@ -39,6 +61,10 @@ class PrecursorsController < ApplicationController
     end
   end
 
+  def auto_complete_for_search_query
+    @precursors = Precursor.find_with_ferret(params["search"]["query"]+"*", :limit => 10,:lazy=>true,:sort=>:name_for_sort)
+    render :partial => "search_results"
+  end
   
   ### DISABLED
   

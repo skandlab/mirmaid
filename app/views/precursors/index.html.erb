@@ -1,16 +1,21 @@
-<h1>Listing precursors</h1>
+<div id="col-top"></div>    
+<div id="col" class="box">
 
-<table>
-  <tr>
-  </tr>
+<h3>Listing precursors</h3>
 
-<% for precursor in @precursors %>
-  <tr>
-    <td><%= precursor.name %></td>
-    <td><%= link_to 'Show', precursor %></td>
-  </tr>
+<% form_tag({:action => :index}, :method => :get) do %>
+<%= render :partial=>"precursors/search_pane" %>
+<%= submit_tag 'Search' %>
+<img id='search_spinner' src='/images/spinner.gif'  style='display:none;'/>
 <% end %>
+<br>
+  
+<%= will_paginate @precursors, :params => params %>
+
+<table class="search">
+  <tr><th>precursor</th><th>matures</th><th>comment</th><th>position</th><tr>
+  <%= render :partial => 'precursor', :collection => @precursors %>
 </table>
 
-<br />
-
+</div> <!-- /col -->
+<div id="col-bottom"></div>

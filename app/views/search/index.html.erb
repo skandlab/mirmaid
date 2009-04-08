@@ -1,0 +1,22 @@
+<div id="col-top"></div>    
+<div id="col" class="box">
+
+<h2>Search</h2>
+
+<% form_tag({:action => :index}, :method => :get) do %>
+<%= render :partial=>"search/search_pane" %>
+<%= submit_tag 'Search' %>
+<img id='search_spinner' src='/images/spinner.gif'  style='display:none;'/>
+<% end %>
+
+<%= will_paginate @objects, :params => params %>
+
+<% if !@objects.empty? %>
+<table class="search">
+  <tr><th>class</th><th>name</th><tr>
+  <%= render :partial => 'search', :collection => @objects, :as => :object %>
+</table>
+<% end %>
+
+</div> <!-- /col -->
+<div id="col-bottom"></div>

@@ -1,0 +1,6 @@
+<tr class="<%= cycle("even","odd") %>">
+  <td><%= link_to mature.name, mature_url(mature.name) %></td>
+  <td><%= mature.highlight(@query, :field => :sequence) %></td>
+  <td><%= mature.highlight(@query, :field => :evidence) %></td>
+  <td><%= mature.highlight(@query, :field => :experiment) %></td>
+</tr>

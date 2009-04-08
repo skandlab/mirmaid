@@ -1,0 +1,5 @@
+<ul>
+  <% for species in @species %>
+  <li><%= link_to species.name, species_url(species.abbreviation) %></li>
+  <% end %>
+</ul>

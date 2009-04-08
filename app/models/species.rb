@@ -14,7 +14,23 @@
 
 class Species < ActiveRecord::Base
   has_many :precursors
+  
+  acts_as_ferret :fields => {
+    :abbreviation => {:store => :yes},
+    :name => {:store => :yes},
+    :name_for_sort => {:index => :untokenized},
+    :taxonomy => {:store => :yes},
+    :taxonomy_for_sort => {:index => :untokenized}
+  }, :store_class_name => 'true'
 
+  def name_for_sort
+    self.name
+  end
+
+  def taxonomy_for_sort
+    self.taxonomy
+  end
+  
   def self.find_rest(id)
     if id.to_s.chomp =~ /\D/
       self.find_by_abbreviation(id)
@@ -22,7 +38,7 @@ class Species < ActiveRecord::Base
       self.find(id)
     end
   end
-
+    
   def papers
     Precursor.find_all_by_species_id(self.id,:include => :papers).map{|x| x.papers}.flatten.uniq
   end

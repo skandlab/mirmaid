@@ -1,17 +1,21 @@
-<h1>Listing species</h1>
+<div id="col-top"></div>
+<div id="col">
 
-<table>
-  <tr>
-  </tr>
+<h3>Listing species</h3>
 
-<% for species in @species %>
-  <tr>
-    <td><%= species.abbreviation %></td>
-    <td><%= species.name %></td>
-    <td><%= link_to 'Show', species %></td>
-  </tr>
+<% form_tag({:action => :index}, :method => :get) do %>
+<div id="autocomplete"><%= render :partial=>"species/search_pane" %></div>
+<%= submit_tag 'Search' %>
+<img id='search_spinner' src='/images/spinner.gif'  style='display:none;'/>
 <% end %>
+<br>
+
+<%= will_paginate @species, :params => params %>
+
+<table class="search">
+  <tr><th>id</th><th>name</th><th>taxonomy</th><tr>
+  <%= render :partial => 'species', :collection => @species %>
 </table>
 
-<br />
-
+</div> <!-- /col -->
+<div id="col-bottom"></div>
