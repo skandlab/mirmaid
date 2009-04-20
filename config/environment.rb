@@ -27,6 +27,7 @@ Rails::Initializer.run do |config|
   config.gem 'ferret'
   config.gem "progressbar"
   config.gem "acts_as_ferret"
+  config.gem "bio", :version => '~> 1.3.0'
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"

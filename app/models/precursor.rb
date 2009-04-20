@@ -57,6 +57,11 @@ class Precursor < ActiveRecord::Base
     p = self.genome_positions.first
     p.nil? ? "NA" : p.contig_start
   end
+
+  def genome_coords
+    p = self.genome_positions.first
+    p.nil? ? "NA" : p.xsome + p.strand.to_s.strip + ":" + p.contig_start.to_s + "-" + p.contig_end.to_s
+  end
   
   def nearby_precursors(dist=10000)
     posa = self.genome_positions

@@ -1,8 +1,61 @@
+<div id="col-top"></div>    
+<div id="col" class="box">
 
-<table>
-  <tr><td>Name</td><td><%= @precursor.name %></td></tr>
-  <tr><td>Sequence</td><td><%= @precursor.sequence %></td></tr>
+<!-- preprocess preqursor seq-->
+<% pseq = @precursor.sequence %>
+<% cols = ['red','green','blue'] %>
+<% @precursor.matures.each_with_index do |mat,i| %>
+ <% pseq=highlight(pseq,mat.sequence,
+ :highlighter=>"<div class='mature'>#{link_to mat.sequence, mature_url(mat.name),:title=>mat.name, :style => style='color:'+cols[i-1]}</div>") %>
+<% end %>
+
+<table class="info">
+  <tr><th>Name</th><td><%= @precursor.name %></td></tr>
+  <tr><th>Accession</th><td><%= @precursor.accession %></td></tr>
+  <tr><th>Species</th><td><%= link_to @precursor.species.name, species_url(@precursor.species.abbreviation) %></td></tr>
+  <tr><th>Description</th><td><%= @precursor.description %></td></tr>
+  <tr><th>Comment</th><td><%= @precursor.comment %></td></tr>
+  <tr><th>Locus</th><td><%= @precursor.genome_coords %></td></tr>
+  <tr><th>Sequence</th><td><div class="seqbox"><%= word_wrap pseq %></div></td></tr>
 </table>
+
+<div class="infobox">
+<h4><%= link_to_function "Mature miRNAs [#{@precursor.matures.size}]", visual_effect(:toggle_blind,'matures',:duration=>0.2)  %></h4>
+<div id="matures" style="display:none">
+<table class="search"><%= render :partial => 'mature', :collection => @precursor.matures %></table>
+</div></div>
+
+<div class="infobox">
+<h4><%= link_to_function "Genome context [#{@precursor.genome_contexts.size}]", visual_effect(:toggle_blind,'genome_contexts',:duration=>0.2)  %></h4>
+<div id="genome_contexts" style="display:none">
+<% if @precursor.genome_contexts.empty? %>
+  <table class="search"><tr><td>Intergenic</td></tr></table>
+<% else %>
+<table class="search"><%= render :partial => 'genome_context', :collection => @precursor.genome_contexts %></table>
+<% end %>
+</div></div>
+
+<div class="infobox">
+<h4><%= link_to_function "Precursor family [#{@precursor.precursor_family.precursors.size}]", visual_effect(:toggle_blind,'precursor_family',:duration=>0.2)  %></h4>
+<div id="precursor_family" style="display:none">
+<table class="search">
+<% @precursor.precursor_family.precursors.group_by(&:species_id).each do |species_id,precs| %>
+<tr><td><%= precs.first.species.name %></td><td><%= precs.map{|x| link_to x.name, precursor_url(x.name)}.join(", ") %></td></tr> 
+<% end %>
+</table>
+</div></div>
+
+<div class="infobox">
+<h4><%= link_to_function "Papers [#{@precursor.papers.size}]", visual_effect(:toggle_blind,'papers',:duration=>0.2)  %></h4>
+<div id="papers" style="display:none">
+<table class="search"><%= render :partial => 'shared/paper', :collection => @precursor.papers %></table><br>
+<%= render :partial => 'shared/pubmed_query', :object => @precursor.name+"*" + " OR " + @precursor.name[/-(.+)/,1]+"*" %>
+</div></div>
+
+</div> <!-- /col -->
+<div id="col-bottom"></div>
 
 
 <%= link_to 'Back', precursors_path %>
+
+

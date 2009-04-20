@@ -1,4 +1,54 @@
+<div id="col-top"></div>    
+<div id="col" class="box">
 
-<%= @mature.name %>
-<%= @mature.sequence %>
+<% cols = ['red','green','blue'] %>
+
+<table class="info">
+  <tr><th>Name</th><td><%= @mature.name %></td></tr>
+  <tr><th>Accession</th><td><%= @mature.accession %></td></tr>
+  <tr><th>Species</th><td><%= link_to @mature.precursor.species.name, species_url(@mature.precursor.species.abbreviation) %></td></tr>
+  <tr><th>Precursor</th><td><%= link_to @mature.precursor.name, precursor_url(@mature.precursor.name) %></td></tr>
+  <tr><th>Description</th><td><%= @mature.evidence %></td></tr>
+  <tr><th>Experiment</th><td><%= @mature.experiment %></td></tr>
+  <tr><th>Sequence</th><td><div class="seqbox"><%= word_wrap @mature.sequence %></div></td></tr>
+</table>
+
+<div class="infobox">
+<h4><%= link_to_function "Seed family [#{@mature.seed_family_members.values.flatten.uniq.size}]", visual_effect(:toggle_blind,'seed_family',:duration=>0.2)  %></h4>
+<div id="seed_family" style="display:none">
+<table class="search">
+  <% @mature.seed_family_members.sort{|a,b| b[0].size <=> a[0].size}.each_with_index do |a,i| %>
+  <% seq,members = a %>
+  <tr>
+    <td><%= highlight(@mature.sequence,seq,:highlighter=>"<div class='mature', style='color:#{cols[i-1]};font-weight:bold'>#{seq}</div>") %></td>
+    <td><%= members.map{|x| link_to x.name, mature_url(x.name)}.join(", ") %></td>
+  </tr> 
+<% end %>
+</table>
+</div></div>
+
+<div class="infobox">
+  <h4><%= link_to_function "Seed family - other species [#{@mature.seed_family_members_other_species.size}]", visual_effect(:toggle_blind,'seed_family_other',:duration=>0.2)  %></h4>
+  <div id="seed_family_other" style="display:none">
+    <p>Mature miRNAs in other species with the same 7mer seed sequence.</p>
+    <table class="search">
+<% @mature.seed_family_members_other_species.group_by{|x| x.precursor.species_id}.each do |species_id,mats| %>
+<tr>
+<td><%= mats.first.precursor.species.name %></td><td><%= mats.map{|x| link_to x.name, mature_url(x.name)}.join(", ") %></td>
+</tr> 
+<% end %>
+</table>
+</div></div>
+
+
+<div class="infobox">
+<h4><%= link_to_function "Papers [#{@mature.papers.size}]", visual_effect(:toggle_blind,'papers',:duration=>0.2)  %></h4>
+<div id="papers" style="display:none">
+<table class="search"><%= render :partial => 'shared/paper', :collection => @mature.papers %></table><br>
+<%= render :partial => 'shared/pubmed_query', :object => @mature.name+"*" + " OR " + @mature.name[/-(.+)/,1]+"*" %>
+</div></div>
+
+</div> <!-- /col -->
+<div id="col-bottom"></div>
+
 <%= link_to 'Back', matures_path %>

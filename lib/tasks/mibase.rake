@@ -3,6 +3,7 @@ require 'uri'
 require 'rubygems'
 require 'progressbar'
 require 'config/environment'
+require 'ftools'
 
 #Settings
 mirbase_version = "13.0" # specify version
@@ -91,7 +92,15 @@ namespace :mibase do
   
   namespace :load do
 
-    desc "[1] load raw miRBase tables and data"
+    desc "[1] fetch miRBase data from ftp site"
+    task :fetch_mirbase  => :environment do
+      # dependency: wget
+      # create local mirbase-data directory
+      
+      
+    end
+
+    desc "[2] load raw miRBase tables and data"
     task :mirbase  => :environment do
 
       puts "Loading miRBase ..."

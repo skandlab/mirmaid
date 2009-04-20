@@ -17,5 +17,14 @@ class ApplicationController < ActionController::Base
     @objects = Species.find_with_ferret(params["multisearch"]["query"]+"*", :limit => 5, :lazy=>true, :multi => [Mature,Precursor])
     render :partial => "shared/multisearch_results"
   end
+
+  def pubmed_papers
+    query = params[:query]
+    limit = params[:limit] || 5
+    @div = params[:div] || "pubmed_papers"
+    @partial = "shared/pubmed_papers"
+    @object = Bio::PubMed.search(query)[0,limit].map{|x| Bio::MEDLINE.new(Bio::PubMed.efetch(x))}
+    render :partial => "shared/update"
+  end
   
 end

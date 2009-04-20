@@ -1,0 +1,11 @@
+<h4>Recent PubMed papers</h4>
+
+<table class="search">
+<% for paper in @object %>
+<tr>
+  <td><%= link_to paper.title.strip, "http://www.ncbi.nlm.nih.gov/pubmed/#{paper.pmid}" %></td>
+  <td><%= paper.authors.join('').strip %></td>
+  <td><%= paper.journal.strip + " (#{paper.year})"%></td>
+</tr>
+<% end %>
+</table>

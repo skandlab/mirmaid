@@ -1,0 +1,2 @@
+page.replace_html @div, :partial => @partial, :object => @object
+page.visual_effect :highlight, @div, :duration => 0.5

@@ -118,12 +118,25 @@ ul.ul-list span.date {padding-right:10px;}
 
 /* ----------------------------------------------------------------------------------------------------------
 5) Others
+"$('#matures').slide.toggle()"
 ---------------------------------------------------------------------------------------------------------- */
 
 .ico-comment {padding-left:18px; background:url("../design/ico-comment.gif") 0 50% no-repeat;}
 .ico-rss {padding-left:18px; background:url("../design/ico-rss.gif") 0 50% no-repeat;}
 
 .smaller {font-size:85%;}
+.seq {font-family:"monospace";}
+.seqbox {float:left; width:800px; word-wrap:break-word;}
+
+.infobox {diplay:block; margin: 10px 10px 10px 10px; border: 1px dotted #ccc; padding-bottom: 5px;}
+.infobox p {padding-left: 5px;}
+.infobox h4 {text-decoration: none; background-color:#ccc; text-align:left; padding: 5px 5px 5px 5px; margin-top: 0px;}
+.infobox h4 a {text-decoration: none; }
+.infobox h4 a:hover {text-decoration: underline; background-color:#ccc; }
+
+.mature {display:inline;}
+.mature a {text-decoration:none;}
+.mature a:hover {font-weight:bold;}
 
 /*
  Table
@@ -131,7 +144,13 @@ problem with reset.css, IE and row background
 http://dgibson.net/blog/article.cfm/articleid=11/CSS-Overcoming-background-transparent-In-IE
 */
 
+table.info {}
+table.info tr {}
+table.info tr th{border:1;vertical-align:top;text-align:left;padding-right:15px;}
+
 table.search {margin-top:0}
+table.search em {font-style: normal; background-color:#FFCC66;color:black;}
+table.search tr td{ background:none; padding:1px 5px 1px 5px}
 table.search tr.even td{ background:none; background-color: #ddd; padding:3px 10px 3px 10px}
 table.search tr.odd td{ background:none; background-color: #eee; padding:3px 10px 3px 10px}
 

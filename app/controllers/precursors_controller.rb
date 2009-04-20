@@ -65,7 +65,7 @@ class PrecursorsController < ApplicationController
     @precursors = Precursor.find_with_ferret(params["search"]["query"]+"*", :limit => 10,:lazy=>true,:sort=>:name_for_sort)
     render :partial => "search_results"
   end
-  
+ 
   ### DISABLED
   
   # GET /precursors/new

@@ -54,5 +54,13 @@ class Species < ActiveRecord::Base
   def precursor_clusters
     Precursor.find_all_by_species_id(self.id,:include => :precursor_clusters).map{|x| x.precursor_clusters}.flatten
   end
+
+  def precursors_count
+    Precursor.count(:conditions => "species_id = #{self.id}")
+  end
+  
+  def matures_count
+    Mature.count(:conditions => "species_id = #{self.id}", :include => {:precursor => :species})
+  end
   
 end

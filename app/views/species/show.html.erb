@@ -1,3 +1,5 @@
+<div id="col-top"></div>    
+<div id="col" class="box">
 
 <table>
   <tr><th align=left>Abbreviation</th><td><%= @species.abbreviation %></td></tr>
@@ -7,8 +9,17 @@
 </table>
 
 <p>
-<%= @species.name %> has <%= link_to @species.precursors.size.to_s + " precursors", species_precursors_path(@species.abbreviation) %> and <%= link_to @species.precursors.map{|x| x.matures.size}.sum.to_s + " matures", species_matures_path(@species.abbreviation) %>.
+<%= @species.name %> has <%= link_to @species.precursors_count.to_s + " precursors", species_precursors_path(@species.abbreviation) %> and <%= link_to @species.matures_count.to_s + " matures", species_matures_path(@species.abbreviation) %>.
 </p>
 
+<div class="infobox">
+<h4><%= link_to_function "Papers [#{@species.papers.size}]", visual_effect(:toggle_blind,'papers',:duration=>0.2)  %></h4>
+<div id="papers" style="display:none">
+<table class="search"><%= render :partial => 'shared/paper', :collection => @species.papers %></table><br>
+</div></div>
+
+</div> <!-- /col -->
+<div id="col-bottom"></div>
 
 <%= link_to 'Back', species_path %>
+

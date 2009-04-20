@@ -46,5 +46,21 @@ class Mature < ActiveRecord::Base
   def papers
     self.precursor.papers
   end
+
+  def seed_family_members
+    #return hash: seed seq => [matures]
+    members = Hash.new()
+    self.seed_families.each do |sf|
+      members[sf.sequence] = sf.matures - [self]
+    end
+    return members
+  end
+  
+  def seed_family_members_other_species
+    #only use 7mer seed family
+    #return hash: seed seq => [matures]
+    seed7m = self.seed_families.select{|x| x.sequence.size == 7}.first.sequence
+    return Mature.find(:all,:conditions => "seed_families.sequence='#{seed7m}'",:include=>[:seed_families,:precursor]).select{|x| x.precursor.species_id != self.precursor.species_id}
+  end
   
 end
