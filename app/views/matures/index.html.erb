@@ -4,7 +4,7 @@
 <h3>Listing matures</h3>
 
 <% form_tag({:action => :index}, :method => :get) do %>
-<%= render :partial=>"matures/search_pane" %>
+<div id="autocomplete"><%= render :partial=>"matures/search_pane" %></div>
 <%= submit_tag 'Search' %>
 <img id='search_spinner' src='/images/spinner.gif'  style='display:none;'/>
 <% end %>

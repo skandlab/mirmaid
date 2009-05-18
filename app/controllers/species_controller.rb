@@ -10,29 +10,29 @@ class SpeciesController < ApplicationController
     if params[:paper_id]
       @species = Paper.find_rest(params[:paper_id]).species
     end
-    
-    if !params[:format] || params[:format] == "html"
-      params[:page] ||= 1
-      @query = (params[:search] && params[:search][:query]) ? params[:search][:query] : ""
-    
-      if @query != ""
-        @query = @query.split(' ').map{|x| x+"*"}.join(' ')
-        @species = Species.find_with_ferret(@query, :page => params[:page], :per_page => 12,:sort => :taxonomy_for_sort,:lazy=>true)
-      else
-        if @species # subselect
-          @species = Species.paginate @species.map{|x| x.id}, :page => params[:page], :per_page => 12, :order => :taxonomy
-        else #all
-          @species = Species.paginate :page => params[:page], :per_page => 12, :order => :taxonomy
+
+    respond_to do |format|
+      format.html do
+        params[:page] ||= 1
+        @query = (params[:search] && params[:search][:query]) ? params[:search][:query] : ""
+        
+        if @query != ""
+          @query = @query.split(' ').map{|x| x+"*"}.join(' ')
+          @species = Species.find_with_ferret(@query, :page => params[:page], :per_page => 12,:sort => :taxonomy_for_sort,:lazy=>true)
+        else
+          if @species # subselect
+            @species = Species.paginate @species.map{|x| x.id}, :page => params[:page], :per_page => 12, :order => :taxonomy
+          else #all
+            @species = Species.paginate :page => params[:page], :per_page => 12, :order => :taxonomy
+          end
         end
       end
-    else # xml
-      @species = Species.find(:all) if !@species
-    end
-        
-    respond_to do |format|
-      format.html # index.html.erb
-      format.xml  { render :xml => @species }
-    end
+      format.xml do
+        @species = Species.find(:all) if !@species
+        render :xml => @species
+      end
+    end       
+    
   end
   
   # GET /species/1
@@ -55,7 +55,7 @@ class SpeciesController < ApplicationController
   end
   
   def auto_complete_for_search_query
-    @species = Species.find_with_ferret(params["search"]["query"]+"*", :limit => 5, :lazy=>true, :sort => :name_for_sort)
+    @species = Species.find_with_ferret(params["search"]["query"]+"*", :limit => 10, :lazy=>true, :sort => :name_for_sort)
     render :partial => "search_results"
   end
   

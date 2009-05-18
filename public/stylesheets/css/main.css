@@ -42,12 +42,11 @@ ul.ul-list span.date {padding-right:10px;}
 3) Layout
 ---------------------------------------------------------------------------------------------------------- */
 
-#main {width:960px; margin:0 auto; overflow:hidden;}
+#main {width:960px; margin:0 auto; overflow:visible;} /* if hidden, multisearch dropdown list will be cutoff */
 
     #header {position:relative; height:75px; padding:0px 20px 0px 20px;}
 
         #logo {margin:0;position:relative;bottom:20px;}
-    
         #nav {position:absolute; bottom:5px; right:20px; margin:0px; font-size: 135%;}
         #nav span {margin:0 8px;}
         #nav #nav-active {font-weight:bold; text-decoration:none;}
@@ -62,13 +61,13 @@ ul.ul-list span.date {padding-right:10px;}
         #search {position:absolute; top:8px; right:20px;} /* 20 */
         #search div {position:relative; width:185px;}
         
-        #search #search-input {position:absolute; top:0; left:0; width:150px; height:30px; background:url("../design/search-input.gif") 0 0 no-repeat; overflow:visible; z-index:100;}
-        #search #search-input input {width:136px; margin:8px; border:0; font:100%/1 "arial",sans-serif; }
+        #search #search-input {position:absolute; top:0; left:0; width:150px; height:30px; background:url("../design/search-input.gif") 0 0 no-repeat; overflow:visible; z-index:300;}
+        #search #search-input input {width:136px; margin:8px; border:0; font:100%/1 "arial",sans-serif;}
         #search #search-submit {position:absolute; top:0; right:0; width:30px;}
 
         #search #search-input ul {margin:0 0px; list-style:none;}
-        #search #search-input li {display:block; font:100%/1 "Arial",sans-serif;}
-        #search #search-input li a {display:block; float:none; padding:3px 0px 3px 0px; background-image:none; text-decoration:none;}
+        #search #search-input li {display:block; font-size:11px; "Arial",sans-serif;}
+        #search #search-input li a {display:block; float:none; font-weight: normal; margin:0px; padding:1px 0px 1px 5px; background-image:none; text-decoration:none;}
         #search #search-input li a:hover {background-image:none; background-color:none; color:black; text-decoration:underline;}
 
     #footer {clear:both; padding:20px 20px 40px 20px; font-size:85%;}
@@ -157,6 +156,6 @@ table.search tr.odd td{ background:none; background-color: #eee; padding:3px 10p
 /* autocomplete text field */
 #autocomplete {display: inline; z-index: 200}
 #autocomplete ul {margin:0 0px; list-style:none;}
-#autocomplete li {display:block; font:100%/1 "Arial",sans-serif;}
-#autocomplete li a {display:block; float:none; padding:3px 0px 3px 0px; background-image:none; text-decoration:none;}
+#autocomplete li {display:block; font-size:11px; "Arial",sans-serif; margin:0px; padding:1px 0px 1px 5px;}
+#autocomplete li a {display:block; float:none; background-image:none; text-decoration:none;}
 #autocomplete li a:hover {background-image:none; background-color:none; color:black; text-decoration:underline;}

@@ -2,8 +2,14 @@ class PrecursorFamiliesController < ApplicationController
   # GET /precursor_families
   # GET /precursor_families.xml
   def index
-    @precursor_families = PrecursorFamily.find(:all)
-        
+    @precursor_families = nil
+    
+    if params[:precursor_id]
+      @precursor_families = [Precursor.find_rest(params[:precursor_id]).precursor_family]
+    else
+      @precursor_families = PrecursorFamily.find(:all)
+    end
+    
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @precursor_families }

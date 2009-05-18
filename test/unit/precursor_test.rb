@@ -27,7 +27,7 @@ class PrecursorTest < ActiveSupport::TestCase
 
   test "precursor <-> species" do
     assert_equal("Homo sapiens",Precursor.find_by_name('hsa-mir-21').species.name)
-    assert(Species.find_by_abbreviation('hsa').precursors.size > 0)
+    assert(Species.find_by_abbreviation('hsa').precursors.size > 50)
   end
 
   test "precursor <-> precursor_family" do

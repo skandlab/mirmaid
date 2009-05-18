@@ -12,7 +12,7 @@ class SearchController < ApplicationController
     
       if @query != ""
         @query = @query.split(' ').map{|x| x+"*"}.join(' ')
-        @objects = Species.find_with_ferret(@query, :page => params[:page], :per_page => 12,:lazy=>true,:multi => [Mature,Precursor])
+        @objects = Species.find_with_ferret(@query, :page => params[:page], :per_page => 12,:lazy=>true,:multi => [Species,Mature,Precursor], :sort => :name_for_sort)
       end
     end
         
@@ -23,7 +23,7 @@ class SearchController < ApplicationController
   end
 
   def auto_complete_for_search_query
-    @objects = Species.find_with_ferret(params["search"]["query"]+"*", :limit => 5, :lazy=>true, :multi => [Mature,Precursor])
+    @objects = Species.find_with_ferret(params["search"]["query"]+"*", :limit => 10, :lazy=>true, :multi => [Species,Mature,Precursor], :sort => :name_for_sort)
     render :partial => "search_results"
   end
     
