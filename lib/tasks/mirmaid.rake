@@ -59,6 +59,7 @@ namespace :mirmaid do
     
     desc 'Create, migrate, load and test data for the database defined by RAILS_ENV.'
     task :load => [ 'mirmaid:db:create',
+                    'mirmaid:load:fetch_mirbase',
                     'mirmaid:load:mirbase',
                     'db:migrate',
                     'mirmaid:ferret:index',
@@ -78,6 +79,7 @@ namespace :mirmaid do
 
     desc 'Little Mirmaid: Create, migrate, load and test data for the database defined by RAILS_ENV.'
     task :load => [ 'mirmaid:db:create',
+                    'mirmaid:load:fetch_mirbase',
                     'mirmaid:load:mirbase',
                     'db:migrate',
                     'mirmaid:test:units']
@@ -108,8 +110,7 @@ namespace :mirmaid do
 
     desc "[1] fetch miRBase data from local dir or ftp site, copy to tmp/mirbase-data/"
     task :fetch_mirbase  => :environment do
-      # dependency: wget
-      # create local mirbase-data directory
+      puts "fetching miRBase data ..."
       
       FileUtils.mkdir_p mirbase_data
       
