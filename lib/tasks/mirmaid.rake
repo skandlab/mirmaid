@@ -5,13 +5,13 @@ require 'progressbar'
 require 'config/environment'
 require 'ftools'
 
-#Settings
-mirbase_version = "CURRENT" # default is current
+#Global settings
+setup = YAML.load_file(RAILS_ROOT + "/setup.yml")
+mirbase_version = setup['mirbase']['version'] || "CURRENT"
+mirbase_data = RAILS_ROOT + "/tmp/mirbase_data/"
 # the database files have to be unzipped!
-# local-data   = "/data1/genome_seq/mirbase/mirror"
-#mirbase_data = "#{mirbase_dir}/#{mirbase_version}/database_files/"
-
-YAML.load_file(expdir + "/datasource.yml")["datasource"]
+# local_data   = "/data1/genome_seq/mirbase/mirror"
+# mirbase_data = "#{mirbase_dir}/#{mirbase_version}/database_files/"
 
 #############
 ### Tasks
@@ -106,11 +106,33 @@ namespace :mirmaid do
   
   namespace :load do
 
-    desc "[1] fetch miRBase data from ftp site"
+    desc "[1] fetch miRBase data from local dir or ftp site, copy to tmp/mirbase-data/"
     task :fetch_mirbase  => :environment do
       # dependency: wget
       # create local mirbase-data directory
       
+      FileUtils.mkdir_p mirbase_data
+      
+      if setup['mirbase']['local_data']
+        # copy files from local dir
+        puts "copying local miRBase data directory ..."
+        FileUtils.cp_r(setup['mirbase']['local_data']+"/#{mirbase_version}/database_files/.",mirbase_data)
+        FileUtils.cp_r(setup['mirbase']['local_data']+"/#{mirbase_version}/README",mirbase_data)
+      elsif setup['mirbase']['remote_data']
+        # wget remote files
+        raise "'wget' command not found" if !system("wget --version > /dev/null") # check that wget is available
+        puts "copying remote miRBase data ..."
+        system("wget -nc -nv -P #{mirbase_data} ftp://ftp.sanger.ac.uk/pub/mirbase/sequences/#{mirbase_version}/database_files/*") or raise $?
+        system("wget -nc -nv -P #{mirbase_data} ftp://ftp.sanger.ac.uk/pub/mirbase/sequences//#{mirbase_version}/README") or raise $?
+      end
+
+      # unzip if needed
+      zipped_files = Dir.glob("#{mirbase_data}/*.gz")
+      raise "'gunzip' command not found" if zipped_files and !system("gunzip --version > /dev/null") # check that gunzip is available
+      puts "unzipping data files ..." if zipped_files
+      zipped_files.each{|zipped_file| system("gunzip -f #{zipped_file}") or raise $?}
+      
+      File.copy(mirbase_data+"/README",RAILS_ROOT+"/public/MIRBASE_README")
       
     end
 
@@ -127,13 +149,12 @@ namespace :mirmaid do
       password = db_config['password']
 
       puts db_config[RAILS_ENV].to_yaml
-      
-      raise "error reading #{mirbase_data} txt.files, remember to unzip files" if Dir["#{mirbase_data}*.txt"].size <= 10
 
-      File.copy(mirbase_data+"../README",RAILS_ROOT+"/public/MIRBASE_README")
-      
+      # asume that mirbase data is unzipped in tmp/mirbase_data/
+            
       # make initial schema changes
-      sed = ""
+      # check that sed is available : "sed --version"
+      raise "'sed' command not found" if !system("sed --version > /dev/null") # check that wget is available
       sed = "sed 's/`mature_from` varchar(4) default NULL,/`mature_from` int(4) default NULL,/'"
       sed += "| sed 's/`mature_to` varchar(4) default NULL,/`mature_to` int(4) default NULL,/'"
       sed += "| sed 's/`sequence` blob,/`sequence` longtext,/'"
@@ -141,21 +162,21 @@ namespace :mirmaid do
       if (adapter == "postgresql") then
         psql = "psql -h #{host} -d #{database} -U #{username}"
         system("cat #{mirbase_data}tables.sql | #{sed} | #{RAILS_ROOT}/script/mysql_to_postgres.rb | #{psql}") or
-          raise("Error reading tables.sql")
+          raise("Error reading table definitions: " + $?)
         Dir["#{mirbase_data}*.txt"].each do |f|
           table = (File.basename(f,".txt"))
           puts f
           puts psql
-          system("cat #{f} | #{psql} -c \'copy #{table} from stdin\'") or raise ("Error loading miRBase data")
+          system("cat #{f} | #{psql} -c \'copy #{table} from stdin\'") or raise ("Error loading miRBase data: " + $?)
         end
 
       elsif (adapter == "mysql")
         puts "mysql will prompt for your password twice:"
         mysql = "mysql -u #{username} -p #{database}"
-        system("cat #{mirbase_data}tables.sql | #{sed} | #{mysql}") or raise 'error loading tables definitions'
-        system("mysqlimport -u #{username} -p #{database} -L #{mirbase_data}*.txt") or raise 'Error loading miRbase data'
+        system("cat #{mirbase_data}tables.sql | #{sed} | #{mysql}") or raise ('Error loading table definitions: ' + $?)
+        system("mysqlimport -u #{username} -p #{database} -L #{mirbase_data}*.txt") or raise('Error loading miRbase data : ' + $?)
       else
-        raise "unsupported database: #{adapter}"
+        raise "MirMaid unsupported database: #{adapter}"
       end
 
     end
