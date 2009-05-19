@@ -1,0 +1,8 @@
+
+development:
+  adapter: postgresql
+  database: mirmaid
+  username: mirmaiduser
+  password: mirmaiduser
+  host: psql
+
