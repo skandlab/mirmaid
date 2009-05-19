@@ -1,0 +1,8 @@
+# if local_data: copy from local data dir
+# elsif remote_data: wget from remote dir
+# else assume data is already in tmp/mirbase_data/
+
+mirbase:
+  version: CURRENT
+  local_data: #"/data1/genome_seq/mirbase/mirror"
+  remote_data: ftp://ftp.sanger.ac.uk/pub/mirbase/sequences/
