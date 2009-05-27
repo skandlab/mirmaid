@@ -46,6 +46,7 @@ namespace :mirmaid do
         ActiveRecord::Base.connection.create_database(config['database'])
         ActiveRecord::Base.establish_connection(config)
       when 'postgresql'
+        puts "psql will now prompt for your user password (you need sudo permissions)"
         system "createdb -h #{config['host']} #{config['database']} -E utf8" or raise('DB could not be created')
       end
     end
@@ -56,7 +57,7 @@ namespace :mirmaid do
       puts "DATABASE WILL BE DROPPED IF YOU DONT TERMINATE ..."
       puts config.to_yaml
       
-      waitsecs = 1
+      waitsecs = 3
       pbar = ProgressBar.new("CTRL-C ...", waitsecs)
       (1..waitsecs).each {|x| pbar.inc; sleep 1  }
       pbar.finish
@@ -65,6 +66,7 @@ namespace :mirmaid do
       when 'mysql'
         ActiveRecord::Base.connection.drop_database config['database']
       when 'postgresql'
+        puts "psql will now prompt for your user password (you need sudo permissions)"
         system "dropdb -h #{config['host']} #{config['database']}" or raise('DB could not be dropped')
       end
     end
