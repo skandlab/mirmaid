@@ -38,8 +38,8 @@ module Kernel
 end
 
 desc 'Run all unit, functional and integration tests'
-task :mibasetest do
-  errors = %w(mibase:test:units mibase:test:functionals mibase:test:integration).collect do |task|
+task :mirmaidtest do
+  errors = %w(mirmaid:test:units mirmaid:test:functionals mirmaid:test:integration).collect do |task|
     begin
       Rake::Task[task].invoke
       nil
@@ -50,7 +50,7 @@ task :mibasetest do
   abort "Errors running #{errors.to_sentence}!" if errors.any?
 end
 
-namespace :mibase do
+namespace :mirmaid do
   namespace :test do
     Rake::TestTask.new(:recent) do |t|
       since = TEST_CHANGES_SINCE
