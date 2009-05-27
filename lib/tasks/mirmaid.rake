@@ -13,6 +13,18 @@ mirbase_data = RAILS_ROOT + "/tmp/mirbase_data/"
 # local_data   = "/data1/genome_seq/mirbase/mirror"
 # mirbase_data = "#{mirbase_dir}/#{mirbase_version}/database_files/"
 
+mirbase_table_files = ['mirna_mature.txt',
+                       'literature_references.txt',
+                       'mirna_2_prefam.txt',
+                       'mirna_chromosome_build.txt',
+                       'mirna_context.txt',
+                       'mirna_database_links.txt',
+                       'mirna_literature_references.txt',
+                       'mirna_prefam.txt',
+                       'mirna_pre_mature.txt',
+                       'mirna_species.txt',
+                       'mirna.txt']
+
 #############
 ### Tasks
 #############
@@ -132,7 +144,11 @@ namespace :mirmaid do
       raise "'gunzip' command not found" if zipped_files and !system("gunzip --version > /dev/null") # check that gunzip is available
       puts "unzipping data files ..." if zipped_files
       zipped_files.each{|zipped_file| system("gunzip -f #{zipped_file}") or raise $?}
-      
+
+      # delete files not needed
+      Dir["#{mirbase_data}*.txt"].each{|f| File.delete(f) if not mirbase_table_files.include?(File.basename(f))}
+
+      # copy README file
       File.copy(mirbase_data+"/README",RAILS_ROOT+"/public/MIRBASE_README")
       
     end
@@ -161,13 +177,13 @@ namespace :mirmaid do
       sed += "| sed 's/`sequence` blob,/`sequence` longtext,/'"
       
       if (adapter == "postgresql") then
+        puts "psql may prompt for your database password multiple times ..."
         psql = "psql -h #{host} -d #{database} -U #{username}"
         system("cat #{mirbase_data}tables.sql | #{sed} | #{RAILS_ROOT}/script/mysql_to_postgres.rb | #{psql}") or
           raise("Error reading table definitions: " + $?)
         Dir["#{mirbase_data}*.txt"].each do |f|
           table = (File.basename(f,".txt"))
-          puts f
-          puts psql
+          puts table
           system("cat #{f} | #{psql} -c \'copy #{table} from stdin\'") or raise ("Error loading miRBase data: " + $?)
         end
 
