@@ -38,6 +38,7 @@ namespace :mirmaid do
     desc ("Create database defined by RAILS_ENV")
     task :create => :environment do
       config = ActiveRecord::Base.configurations[RAILS_ENV]
+      puts "Creating database ..."
       puts config.to_yaml
       case config['adapter']
       when 'mysql'
