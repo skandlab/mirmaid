@@ -45,7 +45,7 @@
 <h4><%= link_to_function "Papers [#{@mature.papers.size}]", visual_effect(:toggle_blind,'papers',:duration=>0.2)  %></h4>
 <div id="papers" style="display:none">
 <table class="search"><%= render :partial => 'shared/paper', :collection => @mature.papers %></table><br>
-<%= render :partial => 'shared/pubmed_query', :object => @mature.name+"*" + " OR " + @mature.name[/-(.+)/,1]+"*" %>
+<%= render :partial => 'shared/pubmed_query', :object => @mature.name[/-(.+)/,1] %>
 </div></div>
 
 </div> <!-- /col -->

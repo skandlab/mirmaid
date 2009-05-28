@@ -49,7 +49,7 @@
 <h4><%= link_to_function "Papers [#{@precursor.papers.size}]", visual_effect(:toggle_blind,'papers',:duration=>0.2)  %></h4>
 <div id="papers" style="display:none">
 <table class="search"><%= render :partial => 'shared/paper', :collection => @precursor.papers %></table><br>
-<%= render :partial => 'shared/pubmed_query', :object => @precursor.name+"*" + " OR " + @precursor.name[/-(.+)/,1]+"*" %>
+<%= render :partial => 'shared/pubmed_query', :object => @precursor.name[/-(.+)/,1] %>
 </div></div>
 
 </div> <!-- /col -->

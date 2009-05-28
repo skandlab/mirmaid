@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
     limit = params[:limit] || 5
     @div = params[:div] || "pubmed_papers"
     @partial = "shared/pubmed_papers"
-    @object = Bio::PubMed.search(query)[0,limit].map{|x| Bio::MEDLINE.new(Bio::PubMed.efetch(x))}
+    @object = Bio::PubMed.esearch(query)[0,limit].map{|x| Bio::MEDLINE.new(Bio::PubMed.efetch(x))}
     render :partial => "shared/update"
   end
   

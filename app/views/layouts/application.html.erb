@@ -6,7 +6,7 @@
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title><%= @title || (controller.controller_name + " : " + controller.action_name) %></title>
   <%= stylesheet_link_tag "css/reset","css/main","css/style", :media => 'screen,projection' %>
-  <link rel="shortcut icon" href="/favicon.png" />
+  <link rel="shortcut icon" href=<%= image_path("favicon.png") %> />
   <%= javascript_include_tag :defaults %>
 </head>
 <body>
