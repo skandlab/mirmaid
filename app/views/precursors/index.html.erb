@@ -6,7 +6,7 @@
 <% form_tag({:action => :index}, :method => :get) do %>
 <div id="autocomplete"><%= render :partial=>"precursors/search_pane" %></div>
 <%= submit_tag 'Search' %>
-<img id='search_spinner' src='/images/spinner.gif'  style='display:none;'/>
+<img id='search_spinner' src=<%= image_path("spinner.gif") %>  style='display:none;'/>
 <% end %>
 <br>
   

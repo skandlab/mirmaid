@@ -21,7 +21,7 @@
 
     <!-- Navigation -->
     <div id="nav">
-      <img id='multi_search_spinner' src='/images/spinner.gif'  style='display:none;'/>      
+      <img id='multi_search_spinner' src=<%= image_path("spinner.gif") %>  style='display:none;'/>      
       <a href="/">Help</a>
     </div> <!-- /nav -->
 
@@ -31,11 +31,11 @@
   <div id="tray">
     
     <ul>
-      <li <%= controller.controller_name == "home" ? 'id="tray-active"': "" %>><%= link_to "home", home_url %></li> 
-      <li <%= controller.controller_name == "species" ? 'id="tray-active"': "" %>><%= link_to "species", species_index_url %></li>
-      <li <%= controller.controller_name == "precursors" ? 'id="tray-active"': "" %>><%= link_to "precursors", precursors_url %></li>
-      <li <%= controller.controller_name == "matures" ? 'id="tray-active"': "" %>><%= link_to "matures", matures_url %></li>
-      <li <%= controller.controller_name == "search" ? 'id="tray-active"': "" %>><%= link_to "search", search_url %></li>
+      <li <%= controller.controller_name == "home" ? 'id="tray-active"': "" %>><%= link_to "Home", home_url %></li> 
+      <li <%= controller.controller_name == "species" ? 'id="tray-active"': "" %>><%= link_to "Species", species_index_url %></li>
+      <li <%= controller.controller_name == "precursors" ? 'id="tray-active"': "" %>><%= link_to "Precursors", precursors_url %></li>
+      <li <%= controller.controller_name == "matures" ? 'id="tray-active"': "" %>><%= link_to "Matures", matures_url %></li>
+      <li <%= controller.controller_name == "search" ? 'id="tray-active"': "" %>><%= link_to "Search", search_url %></li>
     </ul>
     
     <!-- Search -->
@@ -47,7 +47,7 @@
         <div id="search-input"><span class="noscreen">Search:</span>
         <%= render :partial=>"shared/multisearch_pane" %>
         </div>
-        <div id="search-submit"><input type="image" src="/images/search-submit.gif" value="OK" /></div>
+        <div id="search-submit"><input type="image" src=<%= image_path("search-submit.gif") %> value="OK" /></div>
       </div>
       <% end %>
     </div> <!-- /search -->

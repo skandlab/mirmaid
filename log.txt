@@ -53,3 +53,8 @@ matures: from/to : string->integer
 # Unit tests
 ## basic internal unit tests completed for all models
 ## run with 'rake mibase:test:units'
+install Sqlite3:
+
+sudo apt-get install libsqlite3-dev
+gem install sqlite3-ruby
+
