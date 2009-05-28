@@ -31,11 +31,11 @@
   <div id="tray">
     
     <ul>
-      <li <%= controller.controller_name == "home" ? 'id="tray-active"': "" %>><a href="/">Home</a></li> 
-      <li <%= controller.controller_name == "species" ? 'id="tray-active"': "" %>><a href="/species/">Species</a></li>
-      <li <%= controller.controller_name == "precursors" ? 'id="tray-active"': "" %>><a href="/precursors/">Precursors</a></li>
-      <li <%= controller.controller_name == "matures" ? 'id="tray-active"': "" %>><a href="/matures/">Matures</a></li>
-      <li <%= controller.controller_name == "search" ? 'id="tray-active"': "" %>><a href="/search/">Search</a></li>
+      <li <%= controller.controller_name == "home" ? 'id="tray-active"': "" %>><%= link_to "home", home_url %></li> 
+      <li <%= controller.controller_name == "species" ? 'id="tray-active"': "" %>><%= link_to "species", species_index_url %></li>
+      <li <%= controller.controller_name == "precursors" ? 'id="tray-active"': "" %>><%= link_to "precursors", precursors_url %></li>
+      <li <%= controller.controller_name == "matures" ? 'id="tray-active"': "" %>><%= link_to "matures", matures_url %></li>
+      <li <%= controller.controller_name == "search" ? 'id="tray-active"': "" %>><%= link_to "search", search_url %></li>
     </ul>
     
     <!-- Search -->
