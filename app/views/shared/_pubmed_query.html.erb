@@ -2,5 +2,5 @@
 <div id="pubmed_query_button" align="center">
   <%= button_to_remote("Search recent PubMed papers: [#{pubmed_query}] ...", :url =>{:action => "pubmed_papers", :query => pubmed_query}, :loading => "{$('pubmed_query_button').hide();$('pubmed_spinner').show();}") %>
 </div>
-<div align="center"><img id='pubmed_spinner' src='/images/spinner.gif'  style='display:none;' /></div>
+<div align="center"><img id='pubmed_spinner' src=<%= image_path("spinner.gif") %>  style='display:none;' /></div>
 </div>
