@@ -1,8 +1,50 @@
+# Default DBMS is embedded Sqlite3
 
 development:
-  adapter: postgresql
-  database: mirmaid
-  username: mirmaiduser
-  password: mirmaiduser
-  host: psql
+  adapter: sqlite3
+  database: db/development.db.sqlite3
 
+test:
+    adapter: sqlite3
+    database: db/test.db.sqlite3
+
+production:
+  adapter: sqlite3
+  database: db/production.db.sqlite3
+
+# MySQL (default setup). 
+#
+# Install the MySQL driver:
+#   gem install mysql
+# On MacOS X:
+#   gem install mysql [-- --include=/usr/local/lib]
+
+mysql_example:
+  adapter: mysql
+  database: instiki_development
+  username: root
+  password:
+  socket: /path/to/your/mysql.sock
+  # Connect on a TCP socket.  If omitted, the adapter will connect on the
+  # domain socket given by socket instead.
+  #host: localhost
+  #port: 3306
+
+# PostgreSQL versions >=7.4
+#
+# Get the C bindings:
+#   gem install postgres
+# or use the pure-Ruby bindings
+#   gem install postgres-pr
+
+postgresql_example:
+  adapter: postgresql
+  database: instiki_development
+  username: instiki
+  password:
+  # Connect on a TCP socket.  Omitted by default since the client uses a
+  # domain socket that doesn't need configuration.
+  #host: remote-database
+  #port: 5432
+  # Schema search path.  The server defaults to $user,public
+  #schema_search_path: myapp,sharedapp,public
