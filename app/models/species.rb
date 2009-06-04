@@ -16,11 +16,11 @@ class Species < ActiveRecord::Base
   has_many :precursors
   
   acts_as_ferret :fields => {
-    :abbreviation => {:store => :yes},
+    :abbreviation => {:store => :yes,:index => :untokenized},
     :name => {:store => :yes},
-    :name_for_sort => {:index => :untokenized},
+    :name_for_sort => {:store => :yes,:index => :untokenized},
     :taxonomy => {:store => :yes},
-    :taxonomy_for_sort => {:index => :untokenized}
+    :taxonomy_for_sort => {:store => :yes,:index => :untokenized}
   }, :store_class_name => 'true'
 
   def name_for_sort

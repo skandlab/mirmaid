@@ -34,8 +34,8 @@ ActiveRecord::Schema.define(:version => 1) do
   create_table "genome_positions", :force => true do |t|
     t.integer "precursor_id",               :default => 0, :null => false
     t.string  "xsome",        :limit => 20
-    t.integer "contig_start", :limit => 8
-    t.integer "contig_end",   :limit => 8
+    t.integer "contig_start"
+    t.integer "contig_end"
     t.string  "strand",       :limit => 2
   end
 
@@ -98,13 +98,13 @@ ActiveRecord::Schema.define(:version => 1) do
   end
 
   add_index "papers", ["id"], :name => "index_papers_on_id", :unique => true
-  add_index "papers", ["medline"], :name => "index_papers_on_medline", :unique => true
+  add_index "papers", ["medline"], :name => "index_papers_on_medline"
 
   create_table "papers_precursors", :id => false, :force => true do |t|
-    t.integer "precursor_id",              :default => 0, :null => false
-    t.integer "paper_id",                  :default => 0, :null => false
+    t.integer "precursor_id", :default => 0, :null => false
+    t.integer "paper_id",     :default => 0, :null => false
     t.text    "comment"
-    t.integer "order_added",  :limit => 2
+    t.integer "order_added"
   end
 
   add_index "papers_precursors", ["paper_id"], :name => "index_papers_precursors_on_paper_id"

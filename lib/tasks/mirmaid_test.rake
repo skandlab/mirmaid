@@ -89,9 +89,10 @@ namespace :mirmaid do
     Rake::Task['test:uncommitted'].comment = "Test changes since last checkin (only Subversion and Git)"
     
     Rake::TestTask.new(:units) do |t|
+      puts " >>> MirMaid unit testing ... "
       t.libs << "test"
       t.pattern = 'test/unit/**/*_test.rb'
-      t.verbose = true
+      t.verbose = false
     end
     Rake::Task['test:units'].comment = "Run the unit tests in test/unit"
     

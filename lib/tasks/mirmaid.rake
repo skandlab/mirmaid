@@ -30,24 +30,55 @@ mirbase_table_files = ['mirna_mature.txt',
 #############
 
 namespace :mirmaid do
+  
+  desc 'Create, migrate, load and test data for the database defined by RAILS_ENV.'
+  task :load_little => [ 'mirmaid:load_msg',
+                         'mirmaid:db:create',
+                         'mirmaid:mirbase:fetch',
+                         'mirmaid:mirbase:load',
+                         'db:migrate',
+                         'mirmaid:test:units']
+  
+  desc 'Load Little MirMaid + ferret indexing'
+  task :load => [ 'mirmaid:load_little',
+                  'mirmaid:ferret:index']  
+  
+  desc 'Drop and load MirMaid database defined by RAILS_ENV.'
+  task :reset_little => ['mirmaid:db:drop',
+                         'mirmaid:load_little']
 
+  desc 'Reset Little MirMaid + ferret indexing'
+  task :load => [ 'mirmaid:reset_little',
+                  'mirmaid:ferret:index']  
+  
+  task :load_msg do
+    puts ""
+    puts " >>> Loading MirMaid"
+    puts " >>> Depending on your systen, this process can take from half an hour to several hours"
+    puts " >>> Your attention is only required if you use PostgreSQL - and only the first few minutes "
+    puts ""
+    sleep 5;
+  end
+  
   namespace :db do
-
-    # Inspired by db:create, db:drop and db:reset :
+    # Inspired by db:create, db:drop and db:reset
     
     desc ("Create database defined by RAILS_ENV")
     task :create => :environment do
       config = ActiveRecord::Base.configurations[RAILS_ENV]
-      puts "Creating database ..."
-      puts config.to_yaml
+      puts " >>> Creating database ..."
+      #puts config.to_yaml
       case config['adapter']
       when 'mysql'
-        puts "Creating a mysql database named #{config['database']}"
+        #puts "Creating a mysql database named #{config['database']}"
         ActiveRecord::Base.establish_connection(config.merge({'database' => nil}))
         ActiveRecord::Base.connection.create_database(config['database'])
         ActiveRecord::Base.establish_connection(config)
+      when 'sqlite3'
+        #puts "Creating a sqlite3 database named #{config['database']}"
+        Rake::Task['db:create'].invoke
       when 'postgresql'
-        puts "psql will now prompt for your user password (you need sudo permissions)"
+        #puts "psql will now prompt for your user password (you need sudo permissions)"
         system "createdb -h #{config['host']} #{config['database']} -E utf8" or raise('DB could not be created')
       end
     end
@@ -55,64 +86,34 @@ namespace :mirmaid do
     desc ("Drop database defined by RAILS_ENV")
     task :drop => :environment do
       config = ActiveRecord::Base.configurations[RAILS_ENV]
-      puts "DATABASE WILL BE DROPPED IF YOU DONT TERMINATE ..."
-      puts config.to_yaml
+      puts " >>> DATABASE WILL BE DROPPED IF YOU DONT TERMINATE ..."
+      #puts config.to_yaml
       
-      waitsecs = 3
-      pbar = ProgressBar.new("CTRL-C ...", waitsecs)
-      (1..waitsecs).each {|x| pbar.inc; sleep 1  }
+      wait_secs = 5
+      pbar = ProgressBar.new("CTRL-C ...", wait_secs)
+      wait_secs.times {|i| pbar.inc; sleep 1; }
       pbar.finish
 
       case config['adapter']
       when 'mysql'
         ActiveRecord::Base.connection.drop_database config['database']
+      when 'sqlite3'
+        Rake::Task['db:drop'].invoke
       when 'postgresql'
         puts "psql will now prompt for your user password (you need sudo permissions)"
         system "dropdb -h #{config['host']} #{config['database']}" or raise('DB could not be dropped')
       end
     end
-    
-    desc 'Create, migrate, load and test data for the database defined by RAILS_ENV.'
-    task :load => [ 'mirmaid:db:create',
-                    'mirmaid:load:fetch_mirbase',
-                    'mirmaid:load:mirbase',
-                    'db:migrate',
-                    'mirmaid:ferret:index',
-                    'mirmaid:test:units']
-
-    
-    desc 'Drop and load the database defined by RAILS_ENV.'
-    task :reset => ['mirmaid:db:drop',
-                    'mirmaid:db:load']
-
+  
   end # :db
-  
-  # how to convert from mirbase mysql to sqlite ...
-  # task to wget mirbase ...
-  
-  namespace :little do
-
-    desc 'Little Mirmaid: Create, migrate, load and test data for the database defined by RAILS_ENV.'
-    task :load => [ 'mirmaid:db:create',
-                    'mirmaid:load:fetch_mirbase',
-                    'mirmaid:load:mirbase',
-                    'db:migrate',
-                    'mirmaid:test:units']
-
-    
-    desc 'Little Mirmaid: Drop and load the database defined by RAILS_ENV.'
-    task :reset => ['mirmaid:db:drop',
-                    'mirmaid:little:load']
-    
-  end # :little
-  
+ 
   namespace :ferret do
     
     desc "[1] (re)builds ferret indexes"
     task :index  => :environment do
 
-      puts "(Re)building ferret indexes"
-      puts "this step can take some time, come back in an hour ..."
+      puts " >>> (Re)building ferret indexes"
+      puts " >>> this step can take some time, come back in half an hour ..."
       models = [Species,Precursor,Mature]
       models.each_with_index do |m,i|
         puts "Model #{i+1} of #{models.size}: " + m.name
@@ -121,31 +122,31 @@ namespace :mirmaid do
     end
   end
   
-  namespace :load do
+  namespace :mirbase do
 
     desc "[1] fetch miRBase data from local dir or ftp site, copy to tmp/mirbase-data/"
-    task :fetch_mirbase  => :environment do
-      puts "fetching miRBase data ..."
+    task :fetch  => :environment do
+      puts " >>> Fetching miRBase data ..."
       
       FileUtils.mkdir_p mirbase_data
       
       if setup['mirbase']['local_data']
         # copy files from local dir
-        puts "copying local miRBase data directory ..."
+        puts " copying local miRBase data directory ..."
         FileUtils.cp_r(setup['mirbase']['local_data']+"/#{mirbase_version}/database_files/.",mirbase_data)
         FileUtils.cp_r(setup['mirbase']['local_data']+"/#{mirbase_version}/README",mirbase_data)
       elsif setup['mirbase']['remote_data']
         # wget remote files
         raise "'wget' command not found" if !system("wget --version > /dev/null") # check that wget is available
-        puts "copying remote miRBase data ..."
-        system("wget -nc -nv -P #{mirbase_data} ftp://ftp.sanger.ac.uk/pub/mirbase/sequences/#{mirbase_version}/database_files/*") or raise $?
-        system("wget -nc -nv -P #{mirbase_data} ftp://ftp.sanger.ac.uk/pub/mirbase/sequences//#{mirbase_version}/README") or raise $?
+        puts " copying remote miRBase data ..."
+        system("wget -q -nc -nv -P #{mirbase_data} ftp://ftp.sanger.ac.uk/pub/mirbase/sequences/#{mirbase_version}/database_files/*") or raise $?
+        system("wget -q -nc -nv -P #{mirbase_data} ftp://ftp.sanger.ac.uk/pub/mirbase/sequences//#{mirbase_version}/README") or raise $?
       end
 
       # unzip if needed
       zipped_files = Dir.glob("#{mirbase_data}/*.gz")
       raise "'gunzip' command not found" if zipped_files and !system("gunzip --version > /dev/null") # check that gunzip is available
-      puts "unzipping data files ..." if zipped_files
+      puts " unzipping data files ..." if zipped_files
       zipped_files.each{|zipped_file| system("gunzip -f #{zipped_file}") or raise $?}
 
       # delete files not needed
@@ -157,9 +158,9 @@ namespace :mirmaid do
     end
 
     desc "[2] load raw miRBase tables and data"
-    task :mirbase  => :environment do
+    task :load  => :environment do
 
-      puts "Loading miRBase ..."
+      puts " >>> Loading miRBase data ..."
 
       db_config = ActiveRecord::Base.configurations[RAILS_ENV]
       adapter  = db_config['adapter']
@@ -179,7 +180,8 @@ namespace :mirmaid do
       sed += "| sed 's/`mature_to` varchar(4) default NULL,/`mature_to` int(4) default NULL,/'"
       sed += "| sed 's/`sequence` blob,/`sequence` longtext,/'"
       
-      if (adapter == "postgresql") then
+      case adapter
+      when "postgresql"
         puts "psql may prompt for your database password multiple times ..."
         psql = "psql -h #{host} -d #{database} -U #{username}"
         system("cat #{mirbase_data}tables.sql | #{sed} | #{RAILS_ROOT}/script/mysql_to_postgres.rb | #{psql}") or
@@ -189,8 +191,19 @@ namespace :mirmaid do
           puts table
           system("cat #{f} | #{psql} -c \'copy #{table} from stdin\'") or raise ("Error loading miRBase data: " + $?)
         end
-
-      elsif (adapter == "mysql")
+      when "sqlite3"
+        system("cat #{mirbase_data}tables.sql | #{sed} | #{RAILS_ROOT}/script/mysql_to_postgres.rb > #{mirbase_data}/sqlite_tables.sql") or
+          raise("Error reading table definitions: " + $?)
+        system("sqlite3 -init #{mirbase_data}/sqlite_tables.sql #{database} '.exit'") or raise("sqlite3 table definitions error: " + $?)
+        sqlite_data_script = File.new("#{mirbase_data}/sqlite_data.script","w")
+        sqlite_data_script.puts ".separator '\t'"
+        Dir["#{mirbase_data}*.txt"].each do |f|
+          table = (File.basename(f,".txt"))
+          sqlite_data_script.puts ".import \'#{f}\' #{table}"
+        end
+        sqlite_data_script.close
+        system("sqlite3 #{database} '.read #{mirbase_data}/sqlite_data.script'") or raise("sqlite3 data error: " + $?)
+      when "mysql"
         puts "mysql will prompt for your password twice:"
         mysql = "mysql -u #{username} -p #{database}"
         system("cat #{mirbase_data}tables.sql | #{sed} | #{mysql}") or raise ('Error loading table definitions: ' + $?)
@@ -200,5 +213,5 @@ namespace :mirmaid do
       end
 
     end
-  end # :load
-end # :mibase
+  end # :mirbase
+end # :mirmaid

@@ -15,11 +15,11 @@
 #
 
 class Mature < ActiveRecord::Base
-  belongs_to :precursor
+  has_and_belongs_to_many :precursors
   has_and_belongs_to_many :seed_families
  
   acts_as_ferret :fields => {
-    :name => {:store => :yes, :boost => 4},
+    :name => {:store => :yes, :boost => 4, :index => :untokenized},
     :name_for_sort => {:index => :untokenized},
     :sequence => {:store => :yes},
     :evidence => {:store => :yes},
@@ -37,16 +37,15 @@ class Mature < ActiveRecord::Base
       self.find(id.to_i)
     end
   end
-
-  def get_sequence(offset=0)
-    # return sequence with offset i, default is mature sequence
-    self.precursor.sequence[self.mature_from - 1 + offset .. self.mature_to - 1 + offset]
-  end
-  
+ 
   def papers
     self.precursor.papers
   end
-
+  
+  def precursor
+    self.precursors.first # makes sense most of the time
+  end   
+  
   def seed_family_members
     #return hash: seed seq => [matures]
     members = Hash.new()

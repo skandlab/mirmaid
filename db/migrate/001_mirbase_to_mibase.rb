@@ -4,7 +4,13 @@ require 'pp'
 class MirbaseToMibase < ActiveRecord::Migration
   
   def self.up
-
+    
+    puts ""
+    puts " >>> Setting up database"
+    puts " >>> Your attention is not required - check the progress in half an hour"
+    puts ""
+    sleep 5;
+    
     # Divided into sections for each table
 
     # species ok
@@ -28,8 +34,12 @@ class MirbaseToMibase < ActiveRecord::Migration
     rename_column :matures, :auto_mature, :id
     rename_column :matures, :mature_name, :name
     rename_column :matures, :mature_acc, :accession
-    add_column :matures, :precursor_id, :integer
     add_column :matures, :sequence, :string
+
+    # matures_precursors
+    rename_table :mirna_pre_mature, :matures_precursors
+    rename_column :matures_precursors, :auto_mirna, :precursor_id
+    rename_column :matures_precursors, :auto_mature, :mature_id
                 
     # precursor_families ok
       
@@ -63,10 +73,20 @@ class MirbaseToMibase < ActiveRecord::Migration
     rename_table :mirna_literature_references, :papers_precursors
     rename_column :papers_precursors, :auto_mirna, :precursor_id
     rename_column :papers_precursors, :auto_lit, :paper_id
-  
-    # Indexes
-    puts "##### indexing ..."
     
+    # seed families
+
+    create_table :seed_families do |t|
+      t.column "name", :string
+      t.column "sequence", :string
+    end
+
+    create_table(:matures_seed_families,:id=>false) do |t|
+      t.column "mature_id", :integer
+      t.column "seed_family_id", :integer
+    end
+    
+    # Indexes
     add_index :species, :id, :unique => true
     add_index :species, :abbreviation, :unique => true
     
@@ -75,7 +95,6 @@ class MirbaseToMibase < ActiveRecord::Migration
     add_index :precursors, :species_id
     
     add_index :matures, :id, :unique => true
-    add_index :matures, :name
     
     add_index :precursor_families, :id, :unique => true
 
@@ -85,12 +104,16 @@ class MirbaseToMibase < ActiveRecord::Migration
     add_index :genome_positions, :xsome
 
     add_index :papers, :id, :unique => true
-    add_index :papers, :medline, :unique => true
+    # medline is not unique of some reason
+    add_index :papers, :medline #, :unique => true 
 
     add_index :precursor_external_synonyms, :precursor_id
 
     add_index :papers_precursors, :precursor_id
     add_index :papers_precursors, :paper_id
+
+    add_index :seed_families, :id, :unique => true
+    add_index :seed_families, :name, :unique => true
        
     puts "##### precursor <-> precursor families"
     # precursor > precursor_families
@@ -106,49 +129,55 @@ class MirbaseToMibase < ActiveRecord::Migration
     add_index :precursors, :precursor_family_id
     
     puts "##### matures <-> precursor"
-    # precursor < matures
-    # we take the mirbase precursor<->mature many-many mapping and
-    # makes it one-many.
-    # As of miRBase 12.0, there are no matures with multiple
-    # precursors - meaning that mature_id in :precmatures is unique
+    # precursor <-> matures,
+    # relationship is many<->many, but miRBase has duplicate matures
+    # instead of using the relationship
+    # We remove duplicate matures,i.e. hsa-miR-124 should map to precursor
+    # hsa-mir-124-1, -2 and -3
+    # Furthermore, we store the sequence of the mature and removes
+    # start/stop coordinates (which should have been part of the join table)
+    
+    pbar = ProgressBar.new("progress",Species.count)
+    ActiveRecord::Base.transaction do # speed up
+      Species.find_each(:batch_size => 10) do |sp|
+        sp.matures.group_by{|x| x.name}.to_a.each do |name,mats|
+          mats[1..-1].each{|y| y.destroy} if mats.size > 1 # only keep first
+          mat = mats.first
+          mat.sequence = mat.precursor.sequence[mat.mature_from - 1 .. mat.mature_to - 1]
+          #mat.name = mat.name.gsub('.','-') # problems with dots in
+          #id's, i.e. mmu-miR-1982.1, we should now have fixed this in the routes ...
+          mat.save
+        end
+        pbar.inc
+      end
+    end
+    pbar.finish
+    
+    remove_column :matures, :mature_from # redundant (and wrong)
+    remove_column :matures, :mature_to
 
-    ActiveRecord::Base::connection().update("update matures \
-                                  set precursor_id = (select max(auto_mirna) from mirna_pre_mature where matures.id = auto_mature) \ 
-                                  where exists (select 1 from mirna_pre_mature where matures.id = auto_mature)")
-        
-    add_index :matures, :precursor_id
+    add_index :matures, :name, :unique => true
+    add_index :matures_precursors, :precursor_id
+    add_index :matures_precursors, :mature_id
     
     # seed families
     # and store mature sequence
     puts "##### seed families"
-    create_table :seed_families do |t|
-      t.column "name", :string
-      t.column "sequence", :string
-    end
-
-    create_table(:matures_seed_families,:id=>false) do |t|
-      t.column "mature_id", :integer
-      t.column "seed_family_id", :integer
-    end
-    
-    add_index :seed_families, :id, :unique => true
-    add_index :seed_families, :name, :unique => true
-    
-    pbar = ProgressBar.new("progress",Species.count)    
-    Species.find_each(:batch_size => 10) do |sp|
-      sp.matures.each do |mat|
-        mat.sequence = mat.get_sequence
-        mat.name = mat.name.gsub('.','-') # i.e. mmu-miR-1982.1
-        mat.save
-        [1..7,1..6,2..7].each do |srange|
-          seq = mat.sequence[srange]
-          seedname = "#{sp.abbreviation}-#{seq}"
-          sf = SeedFamily.find_or_create_by_name(:name=>seedname,:sequence=>seq)
-          sf.matures << mat
-          sf.save
+        
+    pbar = ProgressBar.new("progress",Species.count)
+    ActiveRecord::Base.transaction do # speed up
+      Species.find_each(:batch_size => 10) do |sp|
+        sp.matures.each do |mat|
+          [1..7,1..6,2..7].each do |srange|
+            seq = mat.sequence[srange]
+            seedname = "#{sp.abbreviation}-#{seq}"
+            sf = SeedFamily.find_or_create_by_name(:name=>seedname,:sequence=>seq)
+            sf.matures << mat
+            sf.save
+          end
         end
+        pbar.inc
       end
-      pbar.inc
     end
     pbar.finish
     
@@ -167,14 +196,16 @@ class MirbaseToMibase < ActiveRecord::Migration
       t.column "precursor_cluster_id", :integer
     end
 
-    pbar = ProgressBar.new("progress",Precursor.count)    
-    Precursor.find_each(:include=>:genome_positions) do |p|
-      pbar.inc
-      [1,10,100].each do |kb|
-        dist = 1*1000
-        pc = PrecursorCluster.new(:name=>"#{p.name}-#{kb}kb")
-        pc.precursors = p.nearby_precursors(dist) + [p]
-        pc.save
+    pbar = ProgressBar.new("progress",Precursor.count)
+    ActiveRecord::Base.transaction do # speed up
+      Precursor.find_each(:include=>:genome_positions) do |p|
+        pbar.inc
+        [1,10,100].each do |kb|
+          dist = 1*1000
+          pc = PrecursorCluster.new(:name=>"#{p.name}-#{kb}kb")
+          pc.precursors = p.nearby_precursors(dist) + [p]
+          pc.save
+        end
       end
     end
     pbar.finish

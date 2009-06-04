@@ -26,5 +26,10 @@ class MatureTest < ActiveSupport::TestCase
     assert_equal("cel-let-7", Mature.find_by_name('cel-let-7').precursor.name)
     assert_equal(1, Mature.find_by_name('cel-let-7').seed_families.select{|x| x.sequence == "GAGGUAG"}.size)
   end
-
+  
+  test "unique-mature" do
+    assert(Mature.find_by_name('hsa-miR-124').precursors.size >= 3)
+    assert_equal(Mature.find_all_by_name('hsa-miR-124').size,1)
+  end
+ 
 end

@@ -71,7 +71,7 @@ class PrecursorsController < ApplicationController
   end
 
   def auto_complete_for_search_query
-    @precursors = Precursor.find_with_ferret(params["search"]["query"]+"*", :limit => 10,:lazy=>true,:sort=>:name_for_sort)
+    @precursors = Precursor.find_with_ferret(params["search"]["query"], :limit => 10,:lazy=>true,:sort=>:name_for_sort)
     render :partial => "search_results"
   end
  
