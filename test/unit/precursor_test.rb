@@ -56,7 +56,7 @@ class PrecursorTest < ActiveSupport::TestCase
   
   test "precursor <-> mature" do
     assert_equal(Precursor.find_by_name('hsa-mir-21'),Precursor.find_by_name('hsa-mir-21').matures.first.precursor)
-    assert_equal(Precursor.find_by_name('hsa-mir-124-1'),Mature.find_by_name('hsa-miR-124').precursors)
+    assert_equal(Precursor.find_by_name('hsa-mir-124-1').matures.sort_by{|x| x.id},Precursor.find_by_name('hsa-mir-124-2').matures.sort_by{|x| x.id})
   end
   
 end

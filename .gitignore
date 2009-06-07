@@ -6,4 +6,4 @@ log.txt
 index/*
 public/MIRBASE_README
 tempbuffer
-setup.yml
+config/mirmaid_config.yml

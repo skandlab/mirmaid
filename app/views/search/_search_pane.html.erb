@@ -1,1 +1,3 @@
-<%= text_field_with_auto_complete :search, :query, {}, {:indicator => :search_spinner,:update_element => "function(item){}"} %>
+<%= text_field_with_auto_complete :search, :query,{:value=>@query}, {:indicator => :search_spinner,:update_element => "function(item){}"} %>
+<%= submit_tag 'Search' %>
+<img id='search_spinner' src=<%= image_path("spinner.gif") %>  style='display:none;'/>

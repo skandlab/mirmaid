@@ -35,7 +35,11 @@ class Precursor < ActiveRecord::Base
   def name_for_sort
     self.name
   end
-  
+
+  def self.ferret_enabled?
+    MIRMAID_CONFIG.ferret_enabled
+  end
+   
   def self.find_rest(id)
     if id.to_s.chomp =~ /\D/
       self.find_by_name(id)

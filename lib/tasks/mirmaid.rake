@@ -5,14 +5,6 @@ require 'progressbar'
 require 'config/environment'
 require 'ftools'
 
-#Global settings
-setup = YAML.load_file(RAILS_ROOT + "/setup.yml")
-mirbase_version = setup['mirbase']['version'] || "CURRENT"
-mirbase_data = RAILS_ROOT + "/tmp/mirbase_data/"
-# the database files have to be unzipped!
-# local_data   = "/data1/genome_seq/mirbase/mirror"
-# mirbase_data = "#{mirbase_dir}/#{mirbase_version}/database_files/"
-
 mirbase_table_files = ['mirna_mature.txt',
                        'literature_references.txt',
                        'mirna_2_prefam.txt',
@@ -31,25 +23,18 @@ mirbase_table_files = ['mirna_mature.txt',
 
 namespace :mirmaid do
   
-  desc 'Create, migrate, load and test data for the database defined by RAILS_ENV.'
-  task :load_little => [ 'mirmaid:load_msg',
-                         'mirmaid:db:create',
-                         'mirmaid:mirbase:fetch',
-                         'mirmaid:mirbase:load',
-                         'db:migrate',
-                         'mirmaid:test:units']
-  
-  desc 'Load Little MirMaid + ferret indexing'
-  task :load => [ 'mirmaid:load_little',
-                  'mirmaid:ferret:index']  
+  desc 'Load and configure MirMaid database for the database defined by RAILS_ENV.'
+  task :load => [ 'mirmaid:load_msg',
+                  'mirmaid:db:create',
+                  'mirmaid:mirbase:fetch',
+                  'mirmaid:mirbase:load',
+                  'db:migrate',
+                  'mirmaid:test:units',
+                  'mirmaid:ferret:index']
   
   desc 'Drop and load MirMaid database defined by RAILS_ENV.'
-  task :reset_little => ['mirmaid:db:drop',
-                         'mirmaid:load_little']
-
-  desc 'Reset Little MirMaid + ferret indexing'
-  task :load => [ 'mirmaid:reset_little',
-                  'mirmaid:ferret:index']  
+  task :reset => ['mirmaid:db:drop',
+                  'mirmaid:load']
   
   task :load_msg do
     puts ""
@@ -109,12 +94,18 @@ namespace :mirmaid do
  
   namespace :ferret do
     
-    desc "[1] (re)builds ferret indexes"
-    task :index  => :environment do
-
+    desc "[1] (re)build ferret indexes"
+    task :index  => :environment do      
+      
+      #touch file config/ferret_enabled
+      if !MIRMAID_CONFIG.ferret_enabled
+        puts "Skipping Ferret indexing, not enabled in config/mirmaid_config.yml"
+        exit(0)
+      end
+            
       puts " >>> (Re)building ferret indexes"
       puts " >>> this step can take some time, come back in half an hour ..."
-      models = [Species,Precursor,Mature]
+      models = MIRMAID_CONFIG.ferret_models
       models.each_with_index do |m,i|
         puts "Model #{i+1} of #{models.size}: " + m.name
         m.rebuild_index
@@ -127,39 +118,44 @@ namespace :mirmaid do
     desc "[1] fetch miRBase data from local dir or ftp site, copy to tmp/mirbase-data/"
     task :fetch  => :environment do
       puts " >>> Fetching miRBase data ..."
+
+      mirbase_data_dir = MIRMAID_CONFIG.mirbase_data_dir
+      mirbase_version = MIRMAID_CONFIG.mirbase_version
       
-      FileUtils.mkdir_p mirbase_data
+      FileUtils.mkdir_p mirbase_data_dir
       
-      if setup['mirbase']['local_data']
+      if MIRMAID_CONFIG.mirbase_local_data
         # copy files from local dir
         puts " copying local miRBase data directory ..."
-        FileUtils.cp_r(setup['mirbase']['local_data']+"/#{mirbase_version}/database_files/.",mirbase_data)
-        FileUtils.cp_r(setup['mirbase']['local_data']+"/#{mirbase_version}/README",mirbase_data)
-      elsif setup['mirbase']['remote_data']
+        FileUtils.cp_r(setup['mirbase']['local_data']+"/#{mirbase_version}/database_files/.",mirbase_data_dir)
+        FileUtils.cp_r(setup['mirbase']['local_data']+"/#{mirbase_version}/README",mirbase_data_dir)
+      elsif MIRMAID_CONFIG.mirbase_remote_data
         # wget remote files
         raise "'wget' command not found" if !system("wget --version > /dev/null") # check that wget is available
         puts " copying remote miRBase data ..."
-        system("wget -q -nc -nv -P #{mirbase_data} ftp://ftp.sanger.ac.uk/pub/mirbase/sequences/#{mirbase_version}/database_files/*") or raise $?
-        system("wget -q -nc -nv -P #{mirbase_data} ftp://ftp.sanger.ac.uk/pub/mirbase/sequences//#{mirbase_version}/README") or raise $?
+        system("wget -q -nc -nv -P #{mirbase_data_dir} ftp://ftp.sanger.ac.uk/pub/mirbase/sequences/#{mirbase_version}/database_files/*") or raise $?
+        system("wget -q -nc -nv -P #{mirbase_data_dir} ftp://ftp.sanger.ac.uk/pub/mirbase/sequences//#{mirbase_version}/README") or raise $?
       end
 
       # unzip if needed
-      zipped_files = Dir.glob("#{mirbase_data}/*.gz")
+      zipped_files = Dir.glob("#{mirbase_data_dir}/*.gz")
       raise "'gunzip' command not found" if zipped_files and !system("gunzip --version > /dev/null") # check that gunzip is available
       puts " unzipping data files ..." if zipped_files
       zipped_files.each{|zipped_file| system("gunzip -f #{zipped_file}") or raise $?}
 
       # delete files not needed
-      Dir["#{mirbase_data}*.txt"].each{|f| File.delete(f) if not mirbase_table_files.include?(File.basename(f))}
+      Dir["#{mirbase_data_dir}*.txt"].each{|f| File.delete(f) if not mirbase_table_files.include?(File.basename(f))}
 
       # copy README file
-      File.copy(mirbase_data+"/README",RAILS_ROOT+"/public/MIRBASE_README")
+      File.copy(mirbase_data_dir+"/README",RAILS_ROOT+"/public/MIRBASE_README")
       
     end
 
     desc "[2] load raw miRBase tables and data"
     task :load  => :environment do
-
+      
+      mirbase_data_dir = MIRMAID_CONFIG.mirbase_data_dir
+      
       puts " >>> Loading miRBase data ..."
 
       db_config = ActiveRecord::Base.configurations[RAILS_ENV]
@@ -184,30 +180,30 @@ namespace :mirmaid do
       when "postgresql"
         puts "psql may prompt for your database password multiple times ..."
         psql = "psql -h #{host} -d #{database} -U #{username}"
-        system("cat #{mirbase_data}tables.sql | #{sed} | #{RAILS_ROOT}/script/mysql_to_postgres.rb | #{psql}") or
+        system("cat #{mirbase_data_dir}tables.sql | #{sed} | #{RAILS_ROOT}/script/mysql_to_postgres.rb | #{psql}") or
           raise("Error reading table definitions: " + $?)
-        Dir["#{mirbase_data}*.txt"].each do |f|
+        Dir["#{mirbase_data_dir}*.txt"].each do |f|
           table = (File.basename(f,".txt"))
           puts table
           system("cat #{f} | #{psql} -c \'copy #{table} from stdin\'") or raise ("Error loading miRBase data: " + $?)
         end
       when "sqlite3"
-        system("cat #{mirbase_data}tables.sql | #{sed} | #{RAILS_ROOT}/script/mysql_to_postgres.rb > #{mirbase_data}/sqlite_tables.sql") or
+        system("cat #{mirbase_data_dir}tables.sql | #{sed} | #{RAILS_ROOT}/script/mysql_to_postgres.rb > #{mirbase_data_dir}/sqlite_tables.sql") or
           raise("Error reading table definitions: " + $?)
-        system("sqlite3 -init #{mirbase_data}/sqlite_tables.sql #{database} '.exit'") or raise("sqlite3 table definitions error: " + $?)
-        sqlite_data_script = File.new("#{mirbase_data}/sqlite_data.script","w")
+        system("sqlite3 -init #{mirbase_data_dir}/sqlite_tables.sql #{database} '.exit'") or raise("sqlite3 table definitions error: " + $?)
+        sqlite_data_script = File.new("#{mirbase_data_dir}/sqlite_data.script","w")
         sqlite_data_script.puts ".separator '\t'"
-        Dir["#{mirbase_data}*.txt"].each do |f|
+        Dir["#{mirbase_data_dir}*.txt"].each do |f|
           table = (File.basename(f,".txt"))
           sqlite_data_script.puts ".import \'#{f}\' #{table}"
         end
         sqlite_data_script.close
-        system("sqlite3 #{database} '.read #{mirbase_data}/sqlite_data.script'") or raise("sqlite3 data error: " + $?)
+        system("sqlite3 #{database} '.read #{mirbase_data_dir}/sqlite_data.script'") or raise("sqlite3 data error: " + $?)
       when "mysql"
         puts "mysql will prompt for your password twice:"
         mysql = "mysql -u #{username} -p #{database}"
-        system("cat #{mirbase_data}tables.sql | #{sed} | #{mysql}") or raise ('Error loading table definitions: ' + $?)
-        system("mysqlimport -u #{username} -p #{database} -L #{mirbase_data}*.txt") or raise('Error loading miRbase data : ' + $?)
+        system("cat #{mirbase_data_dir}tables.sql | #{sed} | #{mysql}") or raise ('Error loading table definitions: ' + $?)
+        system("mysqlimport -u #{username} -p #{database} -L #{mirbase_data_dir}*.txt") or raise('Error loading miRbase data : ' + $?)
       else
         raise "MirMaid unsupported database: #{adapter}"
       end

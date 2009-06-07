@@ -7,7 +7,7 @@
   <tr><th>Name</th><td><%= @mature.name %></td></tr>
   <tr><th>Accession</th><td><%= @mature.accession %></td></tr>
   <tr><th>Species</th><td><%= link_to @mature.precursor.species.name, species_url(@mature.precursor.species.abbreviation) %></td></tr>
-  <tr><th>Precursor</th><td><%= link_to @mature.precursor.name, precursor_url(@mature.precursor.name) %></td></tr>
+  <tr><th>Precursors</th><td><%= @mature.precursors.map{|x| link_to x.name, precursor_url(x.name)}.join(", ") %></td></tr>
   <tr><th>Description</th><td><%= @mature.evidence %></td></tr>
   <tr><th>Experiment</th><td><%= @mature.experiment %></td></tr>
   <tr><th>Sequence</th><td><div class="seqbox"><%= word_wrap @mature.sequence %></div></td></tr>

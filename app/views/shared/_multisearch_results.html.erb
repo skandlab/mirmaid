@@ -11,5 +11,6 @@
         <li><%= object.class%></li>
   <% end %>
   <% end %>
-  <li><b><i>... found <%= @objects.total_hits %> hit(s)</i></b></li>
+  <li><b><i>searching </i></b> '<%= @query %>'</li>
+  <li><b><i>... <%= @objects.total_hits %> hit(s)</i></b></li>
 </ul>

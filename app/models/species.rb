@@ -26,7 +26,11 @@ class Species < ActiveRecord::Base
   def name_for_sort
     self.name
   end
-
+  
+  def self.ferret_enabled?
+    MIRMAID_CONFIG.ferret_enabled
+  end
+  
   def taxonomy_for_sort
     self.taxonomy
   end

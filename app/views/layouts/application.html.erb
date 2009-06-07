@@ -21,8 +21,13 @@
 
     <!-- Navigation -->
     <div id="nav">
-      <img id='multi_search_spinner' src=<%= image_path("spinner.gif") %>  style='display:none;'/>      
-      <a href="/">Help</a>
+      <img id='multi_search_spinner' src=<%= image_path("spinner.gif") %>  style='display:none;'/>
+      <% if !MIRMAID_CONFIG.ferret_enabled %>
+      <font size="2" color="red"><b>Search is disabled
+        <%= link_to "(?)", "http://www.mirmaid.org/doku.php?id=ferret_searching", :title => "Web site searching is disabled, follow link for instructions to activate."%>
+      </font></b>&nbsp;
+      <% end %>
+      <%= link_to "Help", "http://www.mirmaid.org", :title => "MirMaid documentation site"%>
     </div> <!-- /nav -->
 
   </div> <!-- /header -->

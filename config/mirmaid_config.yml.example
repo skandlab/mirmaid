@@ -1,5 +1,5 @@
 ###
-### Edit and rename this file to "setup.yml"
+### Edit and rename this file to "mirmaid_config.yml"
 ###
 
 # How MirMaid fetches miRBase data
@@ -11,3 +11,8 @@ mirbase:
   version: CURRENT
   local_data: 
   remote_data: ftp://ftp.sanger.ac.uk/pub/mirbase/sequences/
+
+# Ferret indexing, only recommended for web interface
+
+ferret:
+  enabled: false

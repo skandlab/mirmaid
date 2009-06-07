@@ -1,0 +1,4 @@
+<%= text_field_with_auto_complete :search, :query,{:value=>@query}, {:indicator => :search_spinner,:update_element => 'function(item){var link = (item.innerHTML).match(/<a\shref="(.+)">/)[1]; if (link != null) {document.location.href = link; } else { document.location.href = "/matures";} }'} %>
+<%= submit_tag 'Search' %>
+<%= link_to "?", "http://www.mirmaid.org/doku.php?id=ferret_searching#search_syntax", :title => "use wildcards (?,*), follow link for examples" %>
+<img id='search_spinner' src=<%= image_path("spinner.gif") %>  style='display:none;'/>

@@ -4,9 +4,7 @@
 <h2>Search</h2>
 
 <% form_tag({:action => :index}, :method => :get) do %>
-<div id="autocomplete"><%= render :partial=>"search/search_pane" %></div>
-<%= submit_tag 'Search' %>
-<img id='search_spinner' src=<%= image_path("spinner.gif") %>  style='display:none;'/>
+<div id="autocomplete"><%= render :partial=>"shared/search_pane" %></div>
 <% end %>
 
 <%= will_paginate @objects, :params => params %>

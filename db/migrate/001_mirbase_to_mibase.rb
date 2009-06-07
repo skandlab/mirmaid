@@ -11,6 +11,10 @@ class MirbaseToMibase < ActiveRecord::Migration
     puts ""
     sleep 5;
     
+    # force ferret indexing off during this process
+    ferret_status = MIRMAID_CONFIG.ferret_enabled
+    MIRMAID_CONFIG.ferret_enabled = false
+    
     # Divided into sections for each table
 
     # species ok
@@ -137,18 +141,25 @@ class MirbaseToMibase < ActiveRecord::Migration
     # Furthermore, we store the sequence of the mature and removes
     # start/stop coordinates (which should have been part of the join table)
     
-    pbar = ProgressBar.new("progress",Species.count)
+    #pbar = ProgressBar.new("progress",Species.count)
+    #ActiveRecord::Base.transaction do # speed up
+    #  Species.find_each(:batch_size => 10) do |sp|
+    #    sp.matures.group_by{|x| x.name}.to_a.each do |name,mats|
+    pbar = ProgressBar.new("progress", Mature.count(:name,:distinct => 1))
     ActiveRecord::Base.transaction do # speed up
-      Species.find_each(:batch_size => 10) do |sp|
-        sp.matures.group_by{|x| x.name}.to_a.each do |name,mats|
-          mats[1..-1].each{|y| y.destroy} if mats.size > 1 # only keep first
-          mat = mats.first
-          mat.sequence = mat.precursor.sequence[mat.mature_from - 1 .. mat.mature_to - 1]
-          #mat.name = mat.name.gsub('.','-') # problems with dots in
-          #id's, i.e. mmu-miR-1982.1, we should now have fixed this in the routes ...
-          mat.save
-        end
+      Mature.find(:all,:include => :precursors).group_by{|x| x.name}.to_a.each do |name,mats|
         pbar.inc
+        mat = mats.first
+        mats[1..-1].each do |m| # only keep first mature
+          mat.precursors += m.precursors # point precursors to mature that we keep
+          m.destroy
+        end
+        mat.evidence = "" if mat.evidence == "\N"
+        mat.precursors.uniq!
+        mat.sequence = mat.precursor.sequence[mat.mature_from - 1 .. mat.mature_to - 1]
+        #mat.name = mat.name.gsub('.','-') # problems with dots in
+        #id's, i.e. mmu-miR-1982.1, we should now have fixed this in the routes ...
+        mat.save
       end
     end
     pbar.finish
@@ -163,8 +174,8 @@ class MirbaseToMibase < ActiveRecord::Migration
     # seed families
     # and store mature sequence
     puts "##### seed families"
-        
-    pbar = ProgressBar.new("progress",Species.count)
+    
+    pbar = ProgressBar.new("progress", Mature.count)
     ActiveRecord::Base.transaction do # speed up
       Species.find_each(:batch_size => 10) do |sp|
         sp.matures.each do |mat|
@@ -175,8 +186,8 @@ class MirbaseToMibase < ActiveRecord::Migration
             sf.matures << mat
             sf.save
           end
+          pbar.inc
         end
-        pbar.inc
       end
     end
     pbar.finish
@@ -214,7 +225,10 @@ class MirbaseToMibase < ActiveRecord::Migration
     add_index :precursor_clusters, :name, :unique => true
     add_index :precursor_clusters_precursors, :precursor_id
     add_index :precursor_clusters_precursors, :precursor_cluster_id
-   
+    
+    # set original ferret status
+    MIRMAID_CONFIG.ferret_enabled = ferret_status
+    
   end
     
   def self.down

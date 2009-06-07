@@ -1,6 +1,8 @@
+<!-- we can use @query to highlight search matches -->
+
 <tr class="<%= cycle("even","odd") %>">
   <td><%= link_to precursor.name, precursor_url(precursor.name) %></td>
   <td><%= precursor.mature_names.split(',').map{|x| link_to x,mature_url(x.strip)}.join(',') %></td>
-  <td><%= precursor.highlight(@query, :field => :comment) %></td>
-  <td><%= precursor.highlight(@query, :field => :xsome).to_s + ":" + precursor.highlight(@query, :field => :contig_start).to_s %></td>
+  <td><%= precursor.comment %></td>
+  <td><%= precursor.xsome.to_s + ":" + precursor.contig_start.to_s %></td>
 </tr>

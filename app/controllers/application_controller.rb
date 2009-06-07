@@ -14,7 +14,8 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
   
   def auto_complete_for_multisearch_query
-    @objects = Species.find_with_ferret("*"+params["multisearch"]["query"]+"*", :limit => 15, :lazy=>true, :multi => [Species,Mature,Precursor], :sort => :name_for_sort)
+    @query = "*"+params["multisearch"]["query"]+"*"
+    @objects = Species.find_with_ferret(@query, :limit => 15, :lazy=>true, :multi => [Species,Mature,Precursor], :sort => :name_for_sort)
     render :partial => "shared/multisearch_results"
   end
 

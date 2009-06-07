@@ -43,20 +43,24 @@ ActiveRecord::Schema.define(:version => 1) do
   add_index "genome_positions", ["xsome"], :name => "index_genome_positions_on_xsome"
 
   create_table "matures", :force => true do |t|
-    t.string  "name",         :limit => 40, :default => "", :null => false
-    t.string  "accession",    :limit => 20, :default => "", :null => false
-    t.integer "mature_from"
-    t.integer "mature_to"
-    t.text    "evidence"
-    t.text    "experiment"
-    t.text    "similarity"
-    t.integer "precursor_id"
-    t.string  "sequence"
+    t.string "name",       :limit => 40, :default => "", :null => false
+    t.string "accession",  :limit => 20, :default => "", :null => false
+    t.text   "evidence"
+    t.text   "experiment"
+    t.text   "similarity"
+    t.string "sequence"
   end
 
   add_index "matures", ["id"], :name => "index_matures_on_id", :unique => true
-  add_index "matures", ["name"], :name => "index_matures_on_name"
-  add_index "matures", ["precursor_id"], :name => "index_matures_on_precursor_id"
+  add_index "matures", ["name"], :name => "index_matures_on_name", :unique => true
+
+  create_table "matures_precursors", :id => false, :force => true do |t|
+    t.integer "precursor_id", :default => 0, :null => false
+    t.integer "mature_id",    :default => 0, :null => false
+  end
+
+  add_index "matures_precursors", ["mature_id"], :name => "index_matures_precursors_on_mature_id"
+  add_index "matures_precursors", ["precursor_id"], :name => "index_matures_precursors_on_precursor_id"
 
   create_table "matures_seed_families", :id => false, :force => true do |t|
     t.integer "mature_id"
@@ -69,11 +73,6 @@ ActiveRecord::Schema.define(:version => 1) do
   create_table "mirna_2_prefam", :id => false, :force => true do |t|
     t.integer "auto_mirna",  :default => 0, :null => false
     t.integer "auto_prefam", :default => 0, :null => false
-  end
-
-  create_table "mirna_pre_mature", :id => false, :force => true do |t|
-    t.integer "auto_mirna",  :default => 0, :null => false
-    t.integer "auto_mature", :default => 0, :null => false
   end
 
   create_table "mirna_target_links", :id => false, :force => true do |t|
