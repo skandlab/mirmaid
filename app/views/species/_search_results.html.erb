@@ -2,4 +2,5 @@
   <% for species in @species %>
   <li><%= link_to species.name, species_url(species.abbreviation) %></li>
   <% end %>
+  <li><b><i>... found <%= @species.total_hits %> hit(s)</i></b></li>
 </ul>

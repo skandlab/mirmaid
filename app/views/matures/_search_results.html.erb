@@ -2,4 +2,5 @@
   <% for mature in @matures %>
   <li><%= link_to mature.name, mature_url(mature.name) %></li>
   <% end %>
+  <li><b><i>... found <%= @matures.total_hits %> hit(s)</i></b></li>
 </ul>
