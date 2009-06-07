@@ -1,4 +1,5 @@
 <ul>
+  <li>'<%= @query %>': <b></i><%= @objects.total_hits %> hit(s)</i></b></li>
   <% for object in @objects %>
   <% case object.class_name
            when 'Species' %>
@@ -11,7 +12,4 @@
         <li><%= object.class%></li>
   <% end %>
   <% end %>
-  <li><b><i>searching </i></b> '<%= @query %>'</li>
-  <li><b><i>... <%= @objects.total_hits %> hit(s)</i></b></li>
-  <li><%= link_to "hjem", "/home" %></li>
 </ul>

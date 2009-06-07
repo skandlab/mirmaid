@@ -3,6 +3,10 @@
 
 <h2>Search</h2>
 
+<% if @query and @query != "" %>
+<div id="searchinfo"><%= "Found " + @objects.total_entries.to_s + " hits" %></div>
+<% end %>
+
 <% form_tag({:action => :index}, :method => :get) do %>
 <div id="autocomplete"><%= render :partial=>"shared/search_pane" %></div>
 <% end %>

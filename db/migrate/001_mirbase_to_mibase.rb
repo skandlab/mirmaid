@@ -154,7 +154,7 @@ class MirbaseToMibase < ActiveRecord::Migration
           mat.precursors += m.precursors # point precursors to mature that we keep
           m.destroy
         end
-        mat.evidence = "" if mat.evidence == "\N"
+        mat.experiment = "" if mat.experiment == "\N"
         mat.precursors.uniq!
         mat.sequence = mat.precursor.sequence[mat.mature_from - 1 .. mat.mature_to - 1]
         #mat.name = mat.name.gsub('.','-') # problems with dots in

@@ -23,7 +23,7 @@ class SearchController < ApplicationController
 
   def auto_complete_for_search_query
     @query = params["search"]["query"]
-    @objects = Species.find_with_ferret(params["search"]["query"], :limit => 10, :lazy=>true, :multi => [Species,Mature,Precursor], :sort => :name_for_sort)
+    @objects = Species.find_with_ferret(@query, :limit => 10, :lazy=>true, :multi => [Species,Mature,Precursor], :sort => :name_for_sort)
     render :partial => "search_results"
   end
     

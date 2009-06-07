@@ -3,18 +3,20 @@
 
 <h3>Listing matures</h3>
 
+<div id="searchinfo"><%= "Found " + @matures.total_entries.to_s + " mature(s)" %></div>
+
 <% form_tag({:action => :index}, :method => :get) do %>
-<div id="autocomplete"><%= render :partial=>"matures/search_pane" %></div>
-<%= submit_tag 'Search' %>
-<img id='search_spinner' src=<%= image_path("spinner.gif") %>  style='display:none;'/>
+<div id="autocomplete"><%= render :partial=>"shared/search_pane" %></div>
 <% end %>
 <br>  
 <%= will_paginate @matures, :params => params %>
 
+<% if !@matures.empty? %>
 <table class="search">
   <tr><th>mature</th><th>sequence</th><th>evidence</th><th>experiment</th><tr>
   <%= render :partial => 'mature', :collection => @matures %>
 </table>
+<% end %>
 
 </div> <!-- /col -->
 <div id="col-bottom"></div>

@@ -104,7 +104,7 @@ namespace :mirmaid do
       end
             
       puts " >>> (Re)building ferret indexes"
-      puts " >>> this step can take some time, come back in half an hour ..."
+      puts " >>> this step can take some time ..."
       models = MIRMAID_CONFIG.ferret_models
       models.each_with_index do |m,i|
         puts "Model #{i+1} of #{models.size}: " + m.name

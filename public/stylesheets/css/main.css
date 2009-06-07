@@ -147,11 +147,13 @@ table.info {}
 table.info tr {}
 table.info tr th{border:1;vertical-align:top;text-align:left;padding-right:15px;}
 
-table.search {margin-top:0}
+table.search {margin-top:10px}
 table.search em {font-style: normal; background-color:#FFCC66;color:black;}
 table.search tr td{ background:none; padding:1px 5px 1px 5px}
 table.search tr.even td{ background:none; background-color: #ddd; padding:3px 10px 3px 10px}
 table.search tr.odd td{ background:none; background-color: #eee; padding:3px 10px 3px 10px}
+
+#searchinfo {float:right; margin-right:10px; padding:5px; background-color:lightblue; border: dotted 1px}
 
 /* autocomplete text field */
 #autocomplete {display: inline; z-index: 200}

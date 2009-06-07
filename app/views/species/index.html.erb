@@ -3,19 +3,21 @@
 
 <h3>Listing species</h3>
 
+<div id="searchinfo"><%= "Found " + @species.total_entries.to_s + " species" %></div>
+
 <% form_tag({:action => :index}, :method => :get) do %>
-<div id="autocomplete"><%= render :partial=>"species/search_pane" %></div>
-<%= submit_tag 'Search' %>
-<img id='search_spinner' src=<%= image_path("spinner.gif") %>  style='display:none;'/>
+<div id="autocomplete"><%= render :partial=>"shared/search_pane" %></div>
 <% end %>
 <br>
 
 <%= will_paginate @species, :params => params %>
 
+<% if !@species.empty? %>
 <table class="search">
   <tr><th>id</th><th>name</th><th>taxonomy</th><tr>
   <%= render :partial => 'species', :collection => @species %>
 </table>
+<% end %>
 
 </div> <!-- /col -->
 <div id="col-bottom"></div>

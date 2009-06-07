@@ -1,6 +1,6 @@
 <ul>
+  <li>'<%= @query %>': <b></i><%= @precursors.total_hits %> hit(s)</i></b></li>
   <% for precursor in @precursors %>
   <li><%= link_to precursor.name, precursor_url(precursor.name) %></li>
   <% end %>
-  <li><b><i>... found <%= @precursors.total_hits %> hit(s)</i></b></li>
 </ul>

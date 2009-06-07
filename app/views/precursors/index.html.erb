@@ -3,19 +3,21 @@
 
 <h3>Listing precursors</h3>
 
+<div id="searchinfo"><%= "Found " + @precursors.total_entries.to_s + " precursor(s)" %></div>
+
 <% form_tag({:action => :index}, :method => :get) do %>
-<div id="autocomplete"><%= render :partial=>"precursors/search_pane" %></div>
-<%= submit_tag 'Search' %>
-<img id='search_spinner' src=<%= image_path("spinner.gif") %>  style='display:none;'/>
+<div id="autocomplete">
+<%= render :partial=>"shared/search_pane" %></div>
 <% end %>
-<br>
   
 <%= will_paginate @precursors, :params => params %>
 
+<% if !@precursors.empty? %>
 <table class="search">
   <tr><th>precursor</th><th>matures</th><th>comment</th><th>position</th><tr>
   <%= render :partial => 'precursor', :collection => @precursors %>
 </table>
+<% end %>
 
 </div> <!-- /col -->
 <div id="col-bottom"></div>
