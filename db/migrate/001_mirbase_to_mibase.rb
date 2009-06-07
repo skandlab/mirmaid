@@ -147,7 +147,7 @@ class MirbaseToMibase < ActiveRecord::Migration
     #    sp.matures.group_by{|x| x.name}.to_a.each do |name,mats|
     pbar = ProgressBar.new("progress", Mature.count(:name,:distinct => 1))
     ActiveRecord::Base.transaction do # speed up
-      Mature.find(:all,:include => :precursors).group_by{|x| x.name}.to_a.each do |name,mats|
+      Mature.find(:all).group_by{|x| x.name}.to_a.each do |name,mats|
         pbar.inc
         mat = mats.first
         mats[1..-1].each do |m| # only keep first mature

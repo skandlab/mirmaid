@@ -63,7 +63,7 @@ namespace :mirmaid do
         #puts "Creating a sqlite3 database named #{config['database']}"
         Rake::Task['db:create'].invoke
       when 'postgresql'
-        #puts "psql will now prompt for your user password (you need sudo permissions)"
+        puts "psql will now prompt for your user password (you might need sudo permissions)"
         system "createdb -h #{config['host']} #{config['database']} -E utf8" or raise('DB could not be created')
       end
     end
@@ -85,7 +85,7 @@ namespace :mirmaid do
       when 'sqlite3'
         Rake::Task['db:drop'].invoke
       when 'postgresql'
-        puts "psql will now prompt for your user password (you need sudo permissions)"
+        puts "psql will now prompt for your user password (you might need sudo permissions)"
         system "dropdb -h #{config['host']} #{config['database']}" or raise('DB could not be dropped')
       end
     end
