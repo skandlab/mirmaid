@@ -23,7 +23,6 @@ Rails::Initializer.run do |config|
   # Specify gems that this application depends on. 
   # They can then be installed with "rake gems:install" on new installations.
   # You have to specify the :lib option for libraries, where the Gem name (sqlite3-ruby) differs from the file itself (sqlite3)
-  #config.gem "sqlite3-ruby", :version => '~> 1.2.4' # needed?
   config.gem 'mislav-will_paginate', :version => '~> 2.3.8', :lib => 'will_paginate', :source => 'http://gems.github.com'
   config.gem 'ferret', :version => '~> 0.11.6'
   config.gem "progressbar"
