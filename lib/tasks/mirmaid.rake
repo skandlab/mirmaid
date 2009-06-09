@@ -51,7 +51,7 @@ namespace :mirmaid do
     desc ("Create database defined by RAILS_ENV")
     task :create => :environment do
       config = ActiveRecord::Base.configurations[RAILS_ENV]
-      puts " >>> Creating database ..."
+      puts "\n >>> Creating database ..."
       #puts config.to_yaml
       case config['adapter']
       when 'mysql'
@@ -71,7 +71,7 @@ namespace :mirmaid do
     desc ("Drop database defined by RAILS_ENV")
     task :drop => :environment do
       config = ActiveRecord::Base.configurations[RAILS_ENV]
-      puts " >>> DATABASE WILL BE DROPPED IF YOU DONT TERMINATE ..."
+      puts "\n >>> DATABASE WILL BE DROPPED IF YOU DONT TERMINATE ..."
       #puts config.to_yaml
       
       wait_secs = 5
@@ -103,7 +103,7 @@ namespace :mirmaid do
         exit(0)
       end
             
-      puts " >>> (Re)building ferret indexes"
+      puts "\n >>> (Re)building ferret indexes"
       puts " >>> this step can take some time ..."
       models = MIRMAID_CONFIG.ferret_models
       models.each_with_index do |m,i|
@@ -117,7 +117,7 @@ namespace :mirmaid do
 
     desc "[1] fetch miRBase data from local dir or ftp site, copy to tmp/mirbase-data/"
     task :fetch  => :environment do
-      puts " >>> Fetching miRBase data ..."
+      puts "\n >>> Fetching miRBase data ..."
 
       mirbase_data_dir = MIRMAID_CONFIG.mirbase_data_dir
       mirbase_version = MIRMAID_CONFIG.mirbase_version
@@ -156,7 +156,7 @@ namespace :mirmaid do
       
       mirbase_data_dir = MIRMAID_CONFIG.mirbase_data_dir
       
-      puts " >>> Loading miRBase data ..."
+      puts "\n >>> Loading miRBase data ..."
 
       db_config = ActiveRecord::Base.configurations[RAILS_ENV]
       adapter  = db_config['adapter']
