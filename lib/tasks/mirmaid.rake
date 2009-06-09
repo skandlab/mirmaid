@@ -63,7 +63,7 @@ namespace :mirmaid do
         #puts "Creating a sqlite3 database named #{config['database']}"
         Rake::Task['db:create'].invoke
       when 'postgresql'
-        puts "psql will now prompt for your user password (you might need sudo permissions)"
+        puts "psql will now prompt for your database user password (you might need superuser permissions to create database)"
         system "createdb -h #{config['host']} #{config['database']} -E utf8" or raise('DB could not be created')
       end
     end
@@ -85,7 +85,7 @@ namespace :mirmaid do
       when 'sqlite3'
         Rake::Task['db:drop'].invoke
       when 'postgresql'
-        puts "psql will now prompt for your user password (you might need sudo permissions)"
+        puts "psql will now prompt for your database user password (you might need superuser permissions to drop database)"
         system "dropdb -h #{config['host']} #{config['database']}" or raise('DB could not be dropped')
       end
     end
@@ -178,7 +178,9 @@ namespace :mirmaid do
       
       case adapter
       when "postgresql"
-        puts "psql may prompt for your database password multiple times ..."
+        puts "psql might prompt multiple times for the database password in your database.yml configuration: " + password
+        puts "read more about how to avoid this: http://www.postgresql.org/docs/8.3/static/libpq-pgpass.html"
+        sleep 5;
         psql = "psql -h #{host} -d #{database} -U #{username}"
         system("cat #{mirbase_data_dir}tables.sql | #{sed} | #{RAILS_ROOT}/script/mysql_to_postgres.rb | #{psql}") or
           raise("Error reading table definitions: " + $?)

@@ -209,7 +209,7 @@ class MirbaseToMibase < ActiveRecord::Migration
     ActiveRecord::Base.transaction do # speed up
       Precursor.find_each(:include=>:genome_positions) do |p|
         pbar.inc
-        [1,10,100].each do |kb|
+        [1,10].each do |kb|
           pc = PrecursorCluster.new(:name=>"#{p.name}-#{kb}kb")
           pc.precursors = p.nearby_precursors(kb*1000) + [p]
           pc.save
