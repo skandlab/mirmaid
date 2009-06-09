@@ -6,8 +6,7 @@
 <div id="searchinfo"><%= "Found " + @precursors.total_entries.to_s + " precursor(s)" %></div>
 
 <% form_tag({:action => :index}, :method => :get) do %>
-<div id="autocomplete">
-<%= render :partial=>"shared/search_pane" %></div>
+<div id="autocomplete"><%= render :partial=>"shared/search_pane" %></div>
 <% end %>
   
 <%= will_paginate @precursors, :params => params %>
