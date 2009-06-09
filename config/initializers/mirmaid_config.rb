@@ -31,7 +31,7 @@ end
 
 MIRMAID_CONFIG = Mirmaid::Config.new()
 
-config.action_controller.relative_url_root = MIRMAID_CONFIG.web_relative_url_root if !MIRMAID_CONFIG.web_relative_url_root.nil?
+@config.action_controller.relative_url_root = MIRMAID_CONFIG.web_relative_url_root if !MIRMAID_CONFIG.web_relative_url_root.nil?
 
 #overload ferret_enabled?
 #class ActiveRecord::Base
