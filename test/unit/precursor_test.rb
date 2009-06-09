@@ -47,7 +47,7 @@ class PrecursorTest < ActiveSupport::TestCase
   end
   
   test "precursor <-> genome_context" do
-    assert_equal(Precursor.find_by_name('hsa-mir-10b'),Precursor.find_by_name('hsa-mir-10b').genome_contexts.first.precursor)
+    assert_equal(Precursor.find_by_name('hsa-mir-155'),Precursor.find_by_name('hsa-mir-155').genome_contexts.first.precursor)
   end
   
   test "precursor <-> genome_position" do
