@@ -16,3 +16,8 @@ mirbase:
 
 ferret:
   enabled: false
+
+# Webserver configuration
+
+web:
+  relative_url_root: 

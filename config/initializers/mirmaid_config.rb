@@ -6,6 +6,7 @@ module Mirmaid
     attr :mirbase_version
     attr :mirbase_local_data
     attr :mirbase_remote_data
+    attr :web_relative_url_root
     attr :ferret_enabled, true
     attr :ferret_models, true
     
@@ -19,12 +20,18 @@ module Mirmaid
       # Ferret config
       @ferret_enabled = setup['ferret']['enabled']
       @ferret_models = [Species,Mature,Precursor]
+
+      # webserver
+      @web_relative_url_root = setup['web']['relative_url_root']
+            
     end
     
   end
 end
 
 MIRMAID_CONFIG = Mirmaid::Config.new()
+
+config.action_controller.relative_url_root = MIRMAID_CONFIG.web_relative_url_root if !MIRMAID_CONFIG.web_relative_url_root.nil?
 
 #overload ferret_enabled?
 #class ActiveRecord::Base
