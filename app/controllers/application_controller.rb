@@ -15,7 +15,10 @@ class ApplicationController < ActionController::Base
   
   def auto_complete_for_multisearch_query
     @query = "*"+params["multisearch"]["query"]+"*"
-    @objects = Species.find_with_ferret(@query, :limit => 15, :lazy=>true, :multi => [Species,Mature,Precursor], :sort => :name_for_sort)
+    # ferret >= 0.4.4, but this seem a bit slower ...
+    @objects = ActsAsFerret::find(@query, [Species,Mature,Precursor], { :limit => 15, :lazy=>true, :sort => :name_for_sort})
+    # ferret 0.4.3
+    # @objects = Species.find_with_ferret(@query, :limit => 15, :lazy=>true, :multi => [Species,Mature,Precursor], :sort => :name_for_sort)
     render :partial => "shared/multisearch_results"
   end
 

@@ -24,22 +24,26 @@ class Precursor < ActiveRecord::Base
   has_many :precursor_external_synonyms
 
   acts_as_ferret :fields => {
-    :name => {:store => :yes, :boost => 4, :index => :untokenized},
+    :name => {:store => :yes, :boost => 4},
     :name_for_sort => {:index => :untokenized},
     :comment => {:store => :yes},
     :mature_names => {:store => :yes, :boost => 2},
     :xsome => {:store => :yes},
-    :contig_start => {:store => :yes}
+    :contig_start => {:store => :yes,:index => :untokenized}
   }, :store_class_name => 'true'
 
   def name_for_sort
-    self.name
+    self.name.downcase
   end
 
   def self.ferret_enabled?
     MIRMAID_CONFIG.ferret_enabled
   end
-   
+
+  def to_param
+    name
+  end
+  
   def self.find_rest(id)
     if id.to_s.chomp =~ /\D/
       self.find_by_name(id)
@@ -47,9 +51,9 @@ class Precursor < ActiveRecord::Base
       self.find(id.to_i)
     end
   end
-  
+
   def mature_names
-    self.matures.map{|x| x.name}.join(', ')
+    self.matures.sort_by{|x| x.name}.map{|x| x.name}.join(', ')
   end
 
   def xsome
@@ -59,7 +63,7 @@ class Precursor < ActiveRecord::Base
 
   def contig_start
     p = self.genome_positions.first
-    p.nil? ? "NA" : p.contig_start
+    p.nil? ? nil : p.contig_start.to_i
   end
 
   def genome_coords

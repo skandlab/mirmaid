@@ -16,15 +16,15 @@ class Species < ActiveRecord::Base
   has_many :precursors
   
   acts_as_ferret :fields => {
-    :abbreviation => {:store => :yes,:index => :untokenized},
+    :abbreviation => {:store => :yes},
     :name => {:store => :yes},
     :name_for_sort => {:store => :yes,:index => :untokenized},
     :taxonomy => {:store => :yes},
-    :taxonomy_for_sort => {:store => :yes,:index => :untokenized}
+    :taxonomy_for_sort => {:store => :yes}
   }, :store_class_name => 'true'
 
   def name_for_sort
-    self.name
+    self.name.downcase
   end
   
   def self.ferret_enabled?
@@ -33,6 +33,10 @@ class Species < ActiveRecord::Base
   
   def taxonomy_for_sort
     self.taxonomy
+  end
+  
+  def to_param
+    abbreviation
   end
   
   def self.find_rest(id)
@@ -64,7 +68,7 @@ class Species < ActiveRecord::Base
   end
   
   def matures_count
-    Mature.count(:conditions => "species_id = #{self.id}", :include => {:precursor => :species})
+    Mature.count(:conditions => "species_id = #{self.id}", :include => {:precursors => :species})
   end
   
 end

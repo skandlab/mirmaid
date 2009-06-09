@@ -4,7 +4,7 @@
 <h2>Search</h2>
 
 <% if @query and @query != "" %>
-<div id="searchinfo"><%= "Found " + @objects.total_entries.to_s + " hits" %></div>
+<div id="searchinfo"><%= @objects.total_entries.to_s + " hit(s)" %></div>
 <% end %>
 
 <% form_tag({:action => :index}, :method => :get) do %>

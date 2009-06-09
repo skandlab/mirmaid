@@ -1,7 +1,7 @@
 <ul>
   <li>'<%= @query %>': <b></i><%= @objects.total_hits %> hit(s)</i></b></li>
   <% for object in @objects %>
-  <% case object.class_name
+  <% case object.class.name
            when 'Species' %>
   <li><%= link_to object.name, species_url(object.abbreviation) %></li>
       <%   when 'Mature' %>

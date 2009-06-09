@@ -1,6 +1,6 @@
 <tr class="<%= cycle("even","odd") %>">
-<td><%= object.class_name %></td>
-  <% case object.class_name
+<td><%= object.class.name %></td>
+  <% case object.class.name
            when 'Species' %>
   <td><%= link_to object.name, species_url(object.abbreviation) %></td>
       <%   when 'Mature' %>

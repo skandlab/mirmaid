@@ -19,21 +19,25 @@ class Mature < ActiveRecord::Base
   has_and_belongs_to_many :seed_families
  
   acts_as_ferret :fields => {
-    :name => {:store => :yes, :boost => 4, :index => :untokenized},
+    :name => {:store => :yes, :boost => 4},
     :name_for_sort => {:index => :untokenized},
-    :sequence => {:store => :yes, :index => :untokenized},
+    :sequence => {:store => :yes},
     :evidence => {:store => :yes},
     :experiment => {:store => :yes}
   }, :store_class_name => 'true'
  
   def name_for_sort
-    self.name
+    self.name.downcase
   end
   
   def self.ferret_enabled?
     MIRMAID_CONFIG.ferret_enabled
   end
-   
+  
+  def to_param
+    name
+  end
+  
   def self.find_rest(id)
     if id.to_s.chomp =~ /\D/
       self.find_by_name(id)

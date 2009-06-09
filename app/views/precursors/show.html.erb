@@ -35,11 +35,12 @@
 <% end %>
 </div></div>
 
+<% members = @precursor.precursor_family.nil? ? [] :  @precursor.precursor_family.precursors %>
 <div class="infobox">
-<h4><%= link_to_function "Precursor family [#{@precursor.precursor_family.precursors.size}]", visual_effect(:toggle_blind,'precursor_family',:duration=>0.2)  %></h4>
+<h4><%= link_to_function "Precursor family [#{members.size}]", visual_effect(:toggle_blind,'precursor_family',:duration=>0.2)  %></h4>
 <div id="precursor_family" style="display:none">
 <table class="search">
-<% @precursor.precursor_family.precursors.group_by(&:species_id).each do |species_id,precs| %>
+<% members.group_by(&:species_id).each do |species_id,precs| %>
 <tr><td><%= precs.first.species.name %></td><td><%= precs.map{|x| link_to x.name, precursor_url(x.name)}.join(", ") %></td></tr> 
 <% end %>
 </table>

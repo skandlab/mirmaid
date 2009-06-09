@@ -46,9 +46,9 @@ class MirbaseToMibase < ActiveRecord::Migration
     rename_column :matures_precursors, :auto_mature, :mature_id
                 
     # precursor_families ok
-      
     rename_table :mirna_prefam, :precursor_families
     rename_column :precursor_families, :auto_prefam, :id
+    
     rename_column :precursor_families, :prefam_id, :name
     rename_column :precursor_families, :prefam_acc, :accession
     
@@ -129,7 +129,7 @@ class MirbaseToMibase < ActiveRecord::Migration
     ActiveRecord::Base::connection().update("update precursors \
                                   set precursor_family_id = (select max(auto_prefam) from mirna_2_prefam where precursors.id = auto_mirna) \ 
                                   where exists (select 1 from mirna_2_prefam where precursors.id = auto_mirna)")
-    
+
     add_index :precursors, :precursor_family_id
     
     puts "##### matures <-> precursor"
@@ -157,8 +157,8 @@ class MirbaseToMibase < ActiveRecord::Migration
         mat.experiment = "" if mat.experiment == "\N"
         mat.precursors.uniq!
         mat.sequence = mat.precursor.sequence[mat.mature_from - 1 .. mat.mature_to - 1]
-        #mat.name = mat.name.gsub('.','-') # problems with dots in
-        #id's, i.e. mmu-miR-1982.1, we should now have fixed this in the routes ...
+        mat.name = mat.name.gsub('.','_') # problems with dots in
+        # id's, i.e. mmu-miR-1982.1, hard to fix in routings
         mat.save
       end
     end
@@ -212,9 +212,8 @@ class MirbaseToMibase < ActiveRecord::Migration
       Precursor.find_each(:include=>:genome_positions) do |p|
         pbar.inc
         [1,10,100].each do |kb|
-          dist = 1*1000
           pc = PrecursorCluster.new(:name=>"#{p.name}-#{kb}kb")
-          pc.precursors = p.nearby_precursors(dist) + [p]
+          pc.precursors = p.nearby_precursors(kb*1000) + [p]
           pc.save
         end
       end

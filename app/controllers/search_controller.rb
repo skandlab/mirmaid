@@ -11,7 +11,8 @@ class SearchController < ApplicationController
       @query = "*" + params[:multisearch][:query] + "*" if (@query.empty? && (params[:multisearch] && params[:multisearch][:query]))
     
       if @query != ""
-        @objects = Species.find_with_ferret(@query, :page => params[:page], :per_page => 12,:lazy=>true,:multi => [Species,Mature,Precursor], :sort => :name_for_sort)
+        @objects = ActsAsFerret::find(@query, [Species,Mature,Precursor], { :page => params[:page], :per_page => 12, :lazy=>true, :sort => :name_for_sort})
+        # @objects = Species.find_with_ferret(@query, :page => params[:page], :per_page => 12,:lazy=>true,:multi => [Species,Mature,Precursor], :sort => :name_for_sort)
       end
     end
         
@@ -23,7 +24,8 @@ class SearchController < ApplicationController
 
   def auto_complete_for_search_query
     @query = params["search"]["query"]
-    @objects = Species.find_with_ferret(@query, :limit => 10, :lazy=>true, :multi => [Species,Mature,Precursor], :sort => :name_for_sort)
+    @objects = ActsAsFerret::find(@query, [Species,Mature,Precursor], { :limit => 15, :lazy=>true, :sort => :name_for_sort})
+    # @objects = Species.find_with_ferret(@query, :limit => 10, :lazy=>true, :multi => [Species,Mature,Precursor], :sort => :name_for_sort)
     render :partial => "search_results"
   end
     
