@@ -17,6 +17,8 @@ mirbase_table_files = ['mirna_mature.txt',
                        'mirna_species.txt',
                        'mirna.txt']
 
+ENV['RAILS_ENV'] ||= 'production'
+
 #############
 ### Tasks
 #############
