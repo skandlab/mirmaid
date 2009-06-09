@@ -7,9 +7,7 @@ class MirbaseToMibase < ActiveRecord::Migration
     
     puts ""
     puts " >>> Setting up database"
-    puts " >>> Your attention is not required - check the progress in half an hour"
     puts ""
-    sleep 5;
     
     # force ferret indexing off during this process
     ferret_status = MIRMAID_CONFIG.ferret_enabled

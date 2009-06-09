@@ -17,8 +17,6 @@ mirbase_table_files = ['mirna_mature.txt',
                        'mirna_species.txt',
                        'mirna.txt']
 
-ENV['RAILS_ENV'] ||= 'production'
-
 #############
 ### Tasks
 #############
@@ -40,11 +38,11 @@ namespace :mirmaid do
   
   task :load_msg do
     puts ""
-    puts " >>> Loading MirMaid"
-    puts " >>> Depending on your systen, this process can take from half an hour to several hours"
+    puts " >>> Loading MirMaid ..."
+    puts " >>> Depending on your system and configuration, this process can take from 15 minutes to an hour"
     puts " >>> Your attention is only required if you use PostgreSQL - and only the first few minutes "
     puts ""
-    sleep 5;
+    sleep 10;
   end
   
   namespace :db do
