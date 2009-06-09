@@ -3,9 +3,9 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :species, :has_many => [:precursors,:matures,:papers], :except => readonly
   
-  map.resources :precursors, :has_one => [:precursor_family,:species], :has_many => [:matures,:papers,:genome_positions,:genome_contexts,:precursor_external_synonyms,:precursor_clusters], :except => readonly, :requirements => { :id => /.+/}
+  map.resources :precursors, :has_one => [:precursor_family,:species], :has_many => [:matures,:papers,:genome_positions,:genome_contexts,:precursor_external_synonyms,:precursor_clusters], :except => readonly
   
-  map.resources :matures, :has_one => [:species], :has_many => [:precursors,:papers,:seed_families], :except => readonly, :requirements => { :id => /.+/}
+  map.resources :matures, :has_one => [:species], :has_many => [:precursors,:papers,:seed_families], :except => readonly
   
   map.resources :precursor_families, :has_many => :precursors, :except => readonly
     
