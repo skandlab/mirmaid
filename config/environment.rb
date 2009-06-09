@@ -15,7 +15,10 @@ Rails::Initializer.run do |config|
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.
   # See Rails::Configuration for more options.
-  @config = config
+  
+  # set relative url root
+  url_root = YAML.load_file(RAILS_ROOT + "/config/mirmaid_config.yml")['web']['relative_url_root'] || raise("Missing config/mirmaid_config.yml file")
+  config.action_controller.relative_url_root = url_root if !url_root.nil?
  
   # Skip frameworks you're not going to use. To use Rails without a database
   # you must remove the Active Record framework.
