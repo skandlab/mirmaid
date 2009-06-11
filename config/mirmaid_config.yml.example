@@ -2,6 +2,12 @@
 ### Edit and rename this file to "mirmaid_config.yml"
 ###
 
+## MirMaid configuration
+# log_level: set log level (in log files log/*.log), [debug,info,warn,error,fatal]
+
+mirmaid:
+  log_level: error
+
 ## MirMaid configuraion
 # version: version number corresponding to ftp://ftp.sanger.ac.uk/pub/mirbase/sequences/, i.e. [10.1]
 # How MirMaid fetches miRBase data

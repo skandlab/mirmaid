@@ -16,7 +16,8 @@ Rails::Initializer.run do |config|
   # -- all .rb files in that directory are automatically loaded.
   # See Rails::Configuration for more options.
   
-  # set relative url root
+  # set relative url root, we could move this to mirmaid_config.rb
+  # ActionController::Base.relative_url_root = xxx
   url_root = YAML.load_file(RAILS_ROOT + "/config/mirmaid_config.yml")['web']['relative_url_root']
   config.action_controller.relative_url_root = url_root if !url_root.nil? and url_root != '/'
  
@@ -49,7 +50,7 @@ Rails::Initializer.run do |config|
 
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug)
-  config.log_level = :warn
+  config.log_level = :error
 
   # Make Time.zone default to the specified zone, and make Active Record store time values
   # in the database in UTC, and return them converted to the specified local zone.
