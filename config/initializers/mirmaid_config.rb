@@ -9,23 +9,25 @@ module Mirmaid
     attr :web_relative_url_root
     attr :ferret_enabled, true
     attr :ferret_models, true
+    attr :google_analytics_tracker
     
     def initialize
       setup = YAML.load_file(RAILS_ROOT + "/config/mirmaid_config.yml") || raise("Missing config/mirmaid_config.yml file")
+
+      # mirbase
       @mirbase_version = setup['mirbase']['version'] || "CURRENT"
       @mirbase_data_dir = RAILS_ROOT + "/tmp/mirbase_data/"
       @mirbase_local_data = setup['mirbase']['local_data']
       @mirbase_remote_data = setup['mirbase']['remote_data']
       
-      # Ferret config
-      @ferret_enabled = setup['ferret']['enabled']
+      # web
+      @ferret_enabled = setup['web']['ferret']
       @ferret_models = [Species,Mature,Precursor]
-
-      # webserver
       @web_relative_url_root = setup['web']['relative_url_root']
+      @google_analytics_tracker = setup['web']['google_analytics']
+      Rubaidh::GoogleAnalytics.tracker_id = @google_analytics_tracker if @google_analytics_tracker
             
     end
-    
   end
 end
 

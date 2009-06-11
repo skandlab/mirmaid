@@ -17,8 +17,8 @@ Rails::Initializer.run do |config|
   # See Rails::Configuration for more options.
   
   # set relative url root
-  url_root = YAML.load_file(RAILS_ROOT + "/config/mirmaid_config.yml")['web']['relative_url_root'] || raise("Missing config/mirmaid_config.yml file")
-  config.action_controller.relative_url_root = url_root if !url_root.nil?
+  url_root = YAML.load_file(RAILS_ROOT + "/config/mirmaid_config.yml")['web']['relative_url_root']
+  config.action_controller.relative_url_root = url_root if !url_root.nil? and url_root != '/'
  
   # Skip frameworks you're not going to use. To use Rails without a database
   # you must remove the Active Record framework.
@@ -26,7 +26,9 @@ Rails::Initializer.run do |config|
 
   # Specify gems that this application depends on. 
   # They can then be installed with "rake gems:install" on new installations.
-  # You have to specify the :lib option for libraries, where the Gem name (sqlite3-ruby) differs from the file itself (sqlite3)
+  # You have to specify the :lib option for libraries, where the Gem
+  # name (sqlite3-ruby) differs from the file itself (sqlite3)
+  config.gem 'rubaidh-google_analytics', :version => '~> 1.1.4', :lib => 'rubaidh/google_analytics', :source => 'http://gems.github.com'
   config.gem 'mislav-will_paginate', :version => '~> 2.3.8', :lib => 'will_paginate', :source => 'http://gems.github.com'
   config.gem "progressbar"
   config.gem "bio", :version => '~> 1.3.0'
