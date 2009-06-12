@@ -22,11 +22,8 @@ mirbase:
 
 ## Web server configuration
 # ferret: Ferret search engine, only recommended if web interface is to be used [true/false]
-# relative_url_root: (experimental feature) use relative root. i.e. for www.mydomain.org/subdir enter [/subdir]
-# google_analytics: activate Google Analytics reporting by entering your tracker id, i.e. ['UA-12345-67']
 
 web:
   ferret: false
-  relative_url_root: /
-  google_analytics:
+
 

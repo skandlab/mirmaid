@@ -10,6 +10,7 @@ module Mirmaid
     attr :ferret_enabled, true
     attr :ferret_models, true
     attr :google_analytics_tracker
+    attr :google_analytics_domain
     attr :log_level
     
     def initialize
@@ -29,9 +30,11 @@ module Mirmaid
       @ferret_enabled = setup['web']['ferret']
       @ferret_models = [Species,Mature,Precursor]
       @web_relative_url_root = setup['web']['relative_url_root']
-      @google_analytics_tracker = setup['web']['google_analytics']
+      @google_analytics_tracker = setup['web']['google_analytics_tracker']
+      @google_analytics_domain = setup['web']['google_analytics_domain']
       if @google_analytics_tracker
         Rubaidh::GoogleAnalytics.tracker_id = @google_analytics_tracker
+        Rubaidh::GoogleAnalytics.domain = @google_analytics_domain if @google_analytics_domain
       else
         Rubaidh::GoogleAnalytics.tracker_id = "disabled"
         Rubaidh::GoogleAnalytics.formats = [] # disable
