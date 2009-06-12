@@ -34,7 +34,7 @@ module Mirmaid
       @google_analytics_domain = setup['web']['google_analytics_domain']
       if @google_analytics_tracker
         Rubaidh::GoogleAnalytics.tracker_id = @google_analytics_tracker
-        Rubaidh::GoogleAnalytics.domain = @google_analytics_domain if @google_analytics_domain
+        Rubaidh::GoogleAnalytics.domain_name = @google_analytics_domain if @google_analytics_domain
       else
         Rubaidh::GoogleAnalytics.tracker_id = "disabled"
         Rubaidh::GoogleAnalytics.formats = [] # disable
