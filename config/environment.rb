@@ -31,6 +31,7 @@ Rails::Initializer.run do |config|
   config.gem "acts_as_ferret", :version => '~> 0.4.4'
   config.gem 'ferret', :version => '= 0.11.6'
   config.gem 'described_routes', :version => '~> 0.5.1'
+  config.gem 'json', :version => '~> 1.1.6'
   
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
