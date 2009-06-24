@@ -1,13 +1,10 @@
 # == Schema Information
-# Schema version: 1
 #
 # Table name: seed_families
 #
-#  id         :integer         not null, primary key
-#  name       :string(255)
-#  sequence   :string(255)
-#  created_at :datetime
-#  updated_at :datetime
+#  id       :integer         not null, primary key
+#  name     :string(255)
+#  sequence :string(255)
 #
 
 class SeedFamily < ActiveRecord::Base
