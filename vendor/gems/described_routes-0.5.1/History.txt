@@ -1,0 +1,68 @@
+== 0.5.1 2009-05-22
+
+* Add ResourceTemplate::ResourceTemplate.find_by_rel
+* More low-level refactoring
+
+== 0.5.0 2009-05-22
+
+* API refactor, a possible prelude to new resource_template gem:
+  * Top level class ResourceTemplate (was DescribedRoutes::ResourceTemplate)
+  * New class ResourceTemplate::ResourceTemplates to which most of ResourceTemplate's class methods have been moved
+* Removed the yaml_short format (superseded by the plain text format)
+
+== 0.4.1 2009-05-20
+
+* Configure gem dependency on addressable 2.1.0 (now available on RubyForge)
+
+== 0.4.0 2009-05-13
+
+* Partial template expansion
+
+== 0.3.6 2009-05-12
+
+* add ResourceTemplate#positional_params
+
+== 0.3.5 2009-05-06
+
+* make it possible to customise the data collected from Rails
+
+== 0.3.4 2009-05-06
+
+* optional BASE parameter: rake described_routes:<format> BASE=http://...
+* added test_rails_app subproject, included in main project's tests
+
+== 0.3.3 2009-05-05
+
+* fix controller for YAML output
+
+== 0.3.0 2009-05-03
+
+* text output:
+  * rake described_routes:text
+  * curl <app>/described_routes.txt
+
+== 0.2.1 2009-04-29
+
+* fix uri_template export, update test fixiture
+
+== 0.2.1 2009-04-29
+
+* reinstate params in json and yaml formats
+
+== 0.2.0 2009-04-29
+
+* add show method to controller
+* add tests
+* refactoring
+
+== 0.1.1 2009-04-28
+
+* include uri_template elements in XML
+
+== 0.1.0 2009-04-24
+
+* added Rails controller
+
+== 0.0.1 2009-04-24
+
+* Initial release
