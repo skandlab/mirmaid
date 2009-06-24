@@ -51,7 +51,30 @@ class Precursor < ActiveRecord::Base
       self.find(id.to_i)
     end
   end
-
+  
+  # dynamic fuzzy name search
+  def self.find_best_by_name(name,stack_depth=0)
+    pres = []
+    pres = self.find_all_by_name(name) if pres.empty?
+    pres = self.find(:all,:conditions => ["name ilike ?",name]) if pres.empty?
+    pres = self.find(:all,:conditions => ["name ilike ?","#{name}-%"]) if pres.empty? # new variants (-1) or 5p/3p variants
+    pres = self.find(:all,:conditions => ["name ilike ?","#{name}a%"]) if pres.empty? # new variants, "a-1" variant
+    return pres if stack_depth==1 # avoid endless loop
+    if pres.empty? # go through matures
+      m = Mature.find_best_by_name(name,1)
+      pres = m.map{|x| x.precursors}.flatten.uniq if !m.nil?
+    end
+    if pres.empty? #still no match, try removing "-\d" or "-\w"
+      newname = name.match(/^(.+)-\w$/).to_a.last
+      pres = self.find_best_by_name(newname) if !newname.nil?
+    end
+    if pres.empty? #still no match, try removing "[abcdefg]"
+      newname = name.match(/^(.+)[abcdefg]$/).to_a.last
+      pres = self.find_best_by_name(newname) if !newname.nil?
+    end
+    return pres    
+  end  
+  
   def mature_names
     self.matures.sort_by{|x| x.name}.map{|x| x.name}.join(', ')
   end

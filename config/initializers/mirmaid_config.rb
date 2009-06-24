@@ -28,6 +28,8 @@ module Mirmaid
       # web
       @ferret_enabled = setup['web']['ferret']
       @ferret_models = [Species,Mature,Precursor]
+      # as of passenger 2.2.3, there is no need to set
+      # relative_url_root anymore: http://code.google.com/p/phusion-passenger/issues/detail?id=169
       @web_relative_url_root = setup['web']['relative_url_root']
       @google_analytics_tracker = setup['web']['google_analytics']
       if @google_analytics_tracker
@@ -36,7 +38,12 @@ module Mirmaid
         Rubaidh::GoogleAnalytics.tracker_id = "disabled"
         Rubaidh::GoogleAnalytics.formats = [] # disable
       end
-            
+
+      # described routes
+      require 'described_routes/rails_controller'
+      hide_routes = [/^ferret_search\S*$/,/^pubmed_papers$/,/^home$/,/^root$/,/^search$/]
+      DescribedRoutes::RailsRoutes.parsed_hook = lambda {|a| a.reject{|h| hide_routes.any?{|x| h["name"] =~ x}}}
+
     end
   end
 end
