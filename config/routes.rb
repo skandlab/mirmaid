@@ -1,49 +1,54 @@
 ActionController::Routing::Routes.draw do |map|
-  readonly = [:create, :new, :update, :destroy, :edit]
   
-  map.resources :species, :has_many => [:precursors,:matures,:papers], :except => readonly
+  map.ferret_search ':controller/:action', :requirements => { :action => /ferret_search\S*/ }, :conditions => { :method => :get }
   
-  map.resources :precursors, :has_one => [:precursor_family,:species], :has_many => [:matures,:papers,:genome_positions,:genome_contexts,:precursor_external_synonyms,:precursor_clusters], :except => readonly
+  map.resources :species, :only => [:index,:show] do |species|
+    species.resources :precursors, :only => [:index]
+    species.resources :matures, :only => [:index]
+    species.resources :papers, :only => [:index]
+  end
   
-  map.resources :matures, :has_one => [:species], :has_many => [:precursors,:papers,:seed_families], :except => readonly
+  map.resources :precursors, :only => [:index,:show] do |precursor|
+    precursor.resource :species, :only => [:show]
+    precursor.resource :precursor_family, :only => [:show]
+    precursor.resources :matures, :only => [:index]
+    precursor.resources :papers, :only => [:index]
+    precursor.resources :genome_positions, :only => [:index]
+    precursor.resources :genome_contexts, :only => [:index]
+    precursor.resources :precursor_external_synonyms, :only => [:index]
+    precursor.resources :precursor_clusters, :only => [:index]
+  end
   
-  map.resources :precursor_families, :has_many => :precursors, :except => readonly
-    
-  map.resources :papers, :has_many => [:precursors, :species, :matures], :except => readonly
-  
-  map.resources :seed_families, :has_many => [:matures], :except => readonly
-  
-  map.resources :precursor_clusters, :has_many => [:precursors], :except => readonly
-  
-  map.resources :genome_positions, :except => readonly
+  map.resources :matures, :only => [:index,:show] do |mature|
+    mature.resource :species, :only => [:show]
+    mature.resources :precursors, :only => [:index]
+    mature.resources :papers, :only => [:index]
+    mature.resources :seed_families, :only => [:index]
+  end
 
-  map.resources :genome_contexts, :except => readonly
+  map.resources :precursor_families, :only => [:index,:show] do |pf|
+    pf.resources :precursors, :only => [:index]
+  end
 
-  map.resources :precursor_external_synonyms, :except => readonly
+  map.resources :papers, :only => [:index,:show] do |paper|
+    paper.resources :precursors, :only => [:index]
+    paper.resources :matures, :only => [:index]
+    paper.resources :species, :only => [:index]
+  end
 
+  map.resources :seed_families, :only => [:index,:show] do |sf|
+    sf.resources :matures, :only => [:index]
+  end
 
-  # The priority is based upon order of creation: first created -> highest priority.
+  map.resources :precursor_clusters, :only => [:index,:show] do |pc|
+    pc.resources :precursors, :only => [:index]
+  end
 
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   map.resources :products
+  map.resources :genome_positions, :only => [:index,:show]
 
-  # Sample resource route with options:
-  #   map.resources :products, :member => { :short => :get, :toggle => :post }, :collection => { :sold => :get }
+  map.resources :genome_contexts, :only => [:index,:show]
 
-  # Sample resource route with sub-resources:
-  #   map.resources :products, :has_many => [ :comments, :sales ], :has_one => :seller
-  
-  # Sample resource route with more complex sub-resources
-  #   map.resources :products do |products|
-  #     products.resources :comments
-  #     products.resources :sales, :collection => { :recent => :get }
-  #   end
-
-  # Sample resource route within a namespace:
-  #   map.namespace :admin do |admin|
-  #     # Directs /admin/products/* to Admin::ProductsController (app/controllers/admin/products_controller.rb)
-  #     admin.resources :products
-  #   end
+  map.resources :precursor_external_synonyms, :only => [:index,:show]
 
   map.search 'search', :controller => 'search', :action => 'index'
   map.home 'home', :controller => 'home', :action => 'index'
@@ -51,11 +56,10 @@ ActionController::Routing::Routes.draw do |map|
   # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
   map.root :controller => "home"
 
-  # See how all your routes lay out with "rake routes"
-
-  # Install the default routes as the lowest priority.
-  # Note: These default routes make all actions in every controller accessible via GET requests. You should
-  # consider removing the them or commenting them out if you're using named routes and resources.
-  map.connect ':controller/:action/:id'
-  map.connect ':controller/:action/:id.:format'
+  # pubmed search
+  map.pubmed_search ':controller/:action', :requirements => { :controller => /search/, :action => /pubmed_papers/ }, :conditions => { :method => :get }
+  
+  # described routes
+  map.resources :described_routes, :controller => "described_routes/rails", :only => [:index,:show]
+    
 end

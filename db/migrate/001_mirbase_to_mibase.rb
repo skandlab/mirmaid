@@ -5,6 +5,7 @@ class MirbaseToMibase < ActiveRecord::Migration
   
   def self.up
     
+    ActiveRecord::Migration.verbose = false    
     puts "\n >>> Setting up database"
     
     # force ferret indexing off during this process

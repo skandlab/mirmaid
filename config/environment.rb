@@ -15,12 +15,7 @@ Rails::Initializer.run do |config|
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.
   # See Rails::Configuration for more options.
-  
-  # set relative url root, we could move this to mirmaid_config.rb
-  # ActionController::Base.relative_url_root = xxx
-  url_root = YAML.load_file(RAILS_ROOT + "/config/mirmaid_config.yml")['web']['relative_url_root']
-  config.action_controller.relative_url_root = url_root if !url_root.nil? and url_root != '/'
- 
+
   # Skip frameworks you're not going to use. To use Rails without a database
   # you must remove the Active Record framework.
   config.frameworks -= [ :active_resource, :action_mailer ]
@@ -33,8 +28,9 @@ Rails::Initializer.run do |config|
   config.gem 'mislav-will_paginate', :version => '~> 2.3.8', :lib => 'will_paginate', :source => 'http://gems.github.com'
   config.gem "progressbar"
   config.gem "bio", :version => '~> 1.3.0'
-  config.gem "acts_as_ferret", :version => '= 0.4.4'
+  config.gem "acts_as_ferret", :version => '~> 0.4.4'
   config.gem 'ferret', :version => '= 0.11.6'
+  config.gem 'described_routes', :version => '~> 0.5.1'
   
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
