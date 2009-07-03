@@ -44,9 +44,9 @@ class Mature < ActiveRecord::Base
   def self.find_best_by_name(name,stack_depth=0)
     mats = []
     mats = self.find_all_by_name(name) if mats.empty?
-    mats = self.find(:all,:conditions => ["name ilike ?",name]) if mats.empty?
-    mats = self.find(:all,:conditions => ["name ilike ?","#{name}-?"]).reject{|m| m.name =~ /\*/} if mats.empty? # new variants (-1) or 5p/3p variants
-    mats = self.find(:all,:conditions => ["name ilike ?","#{name}a"]).reject{|m| m.name =~ /\*/} if mats.empty? # new variants, "a" variant
+    mats = self.find(:all,:conditions => ["name like ?",name]) if mats.empty?
+    mats = self.find(:all,:conditions => ["name like ?","#{name}-?"]).reject{|m| m.name =~ /\*/} if mats.empty? # new variants (-1) or 5p/3p variants
+    mats = self.find(:all,:conditions => ["name like ?","#{name}a"]).reject{|m| m.name =~ /\*/} if mats.empty? # new variants, "a" variant
     return mats if stack_depth==1 # avoid endless loop
     if mats.empty?  # go through precursors
       p = Precursor.find_best_by_name(name,1)
