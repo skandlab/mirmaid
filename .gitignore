@@ -7,3 +7,4 @@ index/*
 public/MIRBASE_README
 tempbuffer
 config/mirmaid_config.yml
+vendor/plugins/mirmaid*
