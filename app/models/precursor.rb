@@ -56,9 +56,9 @@ class Precursor < ActiveRecord::Base
   def self.find_best_by_name(name,stack_depth=0)
     pres = []
     pres = self.find_all_by_name(name) if pres.empty?
-    pres = self.find(:all,:conditions => ["name ilike ?",name]) if pres.empty?
-    pres = self.find(:all,:conditions => ["name ilike ?","#{name}-%"]) if pres.empty? # new variants (-1) or 5p/3p variants
-    pres = self.find(:all,:conditions => ["name ilike ?","#{name}a%"]) if pres.empty? # new variants, "a-1" variant
+    pres = self.find(:all,:conditions => ["name like ?",name]) if pres.empty?
+    pres = self.find(:all,:conditions => ["name like ?","#{name}-%"]) if pres.empty? # new variants (-1) or 5p/3p variants
+    pres = self.find(:all,:conditions => ["name like ?","#{name}a%"]) if pres.empty? # new variants, "a-1" variant
     return pres if stack_depth==1 # avoid endless loop
     if pres.empty? # go through matures
       m = Mature.find_best_by_name(name,1)
