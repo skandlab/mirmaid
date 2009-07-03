@@ -1,0 +1,11 @@
+<% object = plugin_views %>
+<% MIRMAID_CONFIG.plugin_routes[object.class.name.underscore.to_sym].each do |pr| %>
+<!-- pr.method must return a collection object -->
+<% title = pr[:title]||pr[:core_method].to_s.humanize %>
+<% title += (pr[:rel][1] == :many) ? " [" + object.send(pr[:core_method]).size.to_s + "]" : " [1]" %>
+<div class="infobox">
+  <h4><%= link_to_function title, visual_effect(:toggle_blind,pr[:core_method],:duration=>0.2)  %></h4>
+  <div id="<%= pr[:core_method] %>" style="display:none">
+  <%= render :partial => pr[:partial], :object => object.send(pr[:core_method]) %>
+</div></div>
+<% end %>

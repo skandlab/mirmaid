@@ -9,6 +9,9 @@ class SpeciesController < ApplicationController
     
     if params[:paper_id]
       @species = Paper.find_rest(params[:paper_id]).species
+    else
+      # index nested resource from plugin resource
+      @species = plugin_routes(:species,:many,params)
     end
 
     respond_to do |format|
@@ -44,8 +47,11 @@ class SpeciesController < ApplicationController
     elsif params[:mature_id]
       @species = Mature.find_rest(params[:mature_id]).precursor.species
     else
-      @species = Species.find_rest(params[:id])
+      # show nested resource from plugin resource
+      @species = plugin_routes(:species,:one,params)
     end
+
+    @species = Species.find_rest(params[:id]) if @species.nil?
     
     respond_to do |format|
       format.html # show.html.erb

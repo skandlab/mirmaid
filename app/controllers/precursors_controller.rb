@@ -22,6 +22,9 @@ class PrecursorsController < ApplicationController
       @precursors = PrecursorCluster.find_rest(params[:precursor_cluster_id]).precursors
     elsif params[:precursor_external_synonym_id]
       @precursors = PrecursorExternalSynonym.find_rest(params[:precursor_external_synonym_id]).precursors
+    else
+      # index nested resource from plugin resource
+      @precursors = plugin_routes(:precursor,:many,params)
     end
     
     respond_to do |format|
@@ -54,7 +57,12 @@ class PrecursorsController < ApplicationController
   # GET /precursors/1
   # GET /precursors/1.xml
   def show
-    @precursor = Precursor.find_rest(params[:id])
+    @precursor = nil
+    
+    # show nested resource from plugin resource
+    @precursor = plugin_routes(:precursor,:one,params)
+    
+    @precursor = Precursor.find_rest(params[:id]) if @precursor.nil?
         
     respond_to do |format|
       format.html # show.html.erb

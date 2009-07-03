@@ -40,11 +40,7 @@ class Species < ActiveRecord::Base
   end
   
   def self.find_rest(id)
-    if id.to_s.chomp =~ /\D/
-      self.find_by_abbreviation(id)
-    else
-      self.find(id)
-    end
+    return (self.find_by_abbreviation(id.to_s) or self.find(id))
   end
     
   def papers

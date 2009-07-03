@@ -18,6 +18,9 @@ class MaturesController < ApplicationController
       @matures = Paper.find_rest(params[:paper_id]).matures
     elsif params[:seed_family_id]
       @matures = SeedFamily.find_rest(params[:seed_family_id]).matures
+    else
+      # index nested resource from plugin resource
+      @matures = plugin_routes(:mature,:many,params)
     end  
 
     respond_to do |format|
@@ -49,8 +52,13 @@ class MaturesController < ApplicationController
   # GET /matures/1
   # GET /matures/1.xml
   def show
-    @mature = Mature.find_rest(params[:id])
-
+    @mature = nil
+    
+    # show nested resource from plugin resource
+    @mature = plugin_routes(:mature,:one,params)
+    
+    @mature = Mature.find_rest(params[:id]) if @mature.nil?
+        
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @mature }

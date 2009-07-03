@@ -15,11 +15,7 @@ class Paper < ActiveRecord::Base
   has_and_belongs_to_many :precursors
   
   def self.find_rest(id)
-    if id.to_s.chomp =~ /^pmid/
-      self.find_by_medline(id.scan(/^pmid:(\d+)/).first)
-    else
-      self.find(id)
-    end
+    return (self.find_by_medline(id.to_s) or self.find(id))
   end
 
   def species
