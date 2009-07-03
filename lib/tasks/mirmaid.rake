@@ -170,7 +170,7 @@ namespace :mirmaid do
             
       # make initial schema changes
       # check that sed is available : "sed --version"
-      raise "'sed' command not found" if !system("sed --version > /dev/null") # check that wget is available
+      raise "'sed' command not found" if !(`echo 'mirmaid' | sed s/i/o/`.chomp == "mormaid") # check that sed is available
       sed = "sed 's/`mature_from` varchar(4) default NULL,/`mature_from` int(4) default NULL,/'"
       sed += "| sed 's/`mature_to` varchar(4) default NULL,/`mature_to` int(4) default NULL,/'"
       sed += "| sed 's/`sequence` blob,/`sequence` longtext,/'"
