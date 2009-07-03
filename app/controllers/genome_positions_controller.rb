@@ -7,8 +7,11 @@ class GenomePositionsController < ApplicationController
     if params[:precursor_id]
       @genome_positions = Precursor.find_rest(params[:precursor_id]).genome_positions
     else
-      @genome_positions = GenomePosition.find(:all)
-    end
+      # index nested resource from plugin resource
+      @genome_positions = plugin_routes(:genome_position,:many,params)
+    end      
+
+    @genome_positions = GenomePosition.find(:all) if @genome_positions.nil?
     
     respond_to do |format|
       format.html # index.html.erb
@@ -19,7 +22,9 @@ class GenomePositionsController < ApplicationController
   # GET /genome_positions/1
   # GET /genome_positions/1.xml
   def show
-    @genome_position = GenomePosition.find(params[:id])
+    @genome_position = nil
+    @genome_position = plugin_routes(:genome_position,:one,params)
+    @genome_position = GenomePosition.find(params[:id]) if @genome_position.nil?
 
     respond_to do |format|
       format.html # show.html.erb
@@ -27,65 +32,4 @@ class GenomePositionsController < ApplicationController
     end
   end
 
-  # GET /genome_positions/new
-  # GET /genome_positions/new.xml
-  def new
-    @genome_position = GenomePosition.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @genome_position }
-    end
-  end
-
-  # GET /genome_positions/1/edit
-  def edit
-    @genome_position = GenomePosition.find(params[:id])
-  end
-
-  # POST /genome_positions
-  # POST /genome_positions.xml
-  def create
-    @genome_position = GenomePosition.new(params[:genome_position])
-
-    respond_to do |format|
-      if @genome_position.save
-        flash[:notice] = 'GenomePosition was successfully created.'
-        format.html { redirect_to(@genome_position) }
-        format.xml  { render :xml => @genome_position, :status => :created, :location => @genome_position }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @genome_position.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
-  # PUT /genome_positions/1
-  # PUT /genome_positions/1.xml
-  def update
-    @genome_position = GenomePosition.find(params[:id])
-
-    respond_to do |format|
-      if @genome_position.update_attributes(params[:genome_position])
-        flash[:notice] = 'GenomePosition was successfully updated.'
-        format.html { redirect_to(@genome_position) }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @genome_position.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /genome_positions/1
-  # DELETE /genome_positions/1.xml
-  def destroy
-    @genome_position = GenomePosition.find(params[:id])
-    @genome_position.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(genome_positions_url) }
-      format.xml  { head :ok }
-    end
-  end
 end

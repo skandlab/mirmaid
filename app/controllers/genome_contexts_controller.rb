@@ -7,8 +7,11 @@ class GenomeContextsController < ApplicationController
     if params[:precursor_id]
       @genome_contexts = Precursor.find_rest(params[:precursor_id]).genome_contexts
     else
-      @genome_contexts = GenomeContext.find(:all)
+      # index nested resource from plugin resource
+      @genome_contexts = plugin_routes(:genome_context,:many,params)
     end
+    
+    @genome_contexts = GenomeContext.find(:all) if @genome_contexts.nil?
     
     respond_to do |format|
       format.html # index.html.erb
@@ -19,7 +22,9 @@ class GenomeContextsController < ApplicationController
   # GET /genome_contexts/1
   # GET /genome_contexts/1.xml
   def show
-    @genome_context = GenomeContext.find(params[:id])
+    @genome_context = nil
+    @genome_context = plugin_routes(:genome_context,:one,params)
+    @genome_context = GenomeContext.find(params[:id]) if @genome_context.nil?
 
     respond_to do |format|
       format.html # show.html.erb

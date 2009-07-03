@@ -37,11 +37,7 @@ class Mature < ActiveRecord::Base
   end
   
   def self.find_rest(id)
-    if id.to_s.chomp =~ /\D/
-      self.find_by_name(id)
-    else
-      self.find(id.to_i)
-    end
+    return (self.find_by_name(id.to_s) or self.find(id.to_i))
   end
 
   # dynamic fuzzy name search

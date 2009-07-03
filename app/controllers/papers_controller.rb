@@ -11,8 +11,11 @@ class PapersController < ApplicationController
     elsif params[:species_id]
       @papers = Species.find_rest(params[:species_id]).papers
     else
-      @papers = Paper.find(:all)
+      # index nested resource from plugin resource
+      @papers = plugin_routes(:paper,:many,params)
     end
+
+    @papers = Paper.find(:all) if @papers.nil?
     
     respond_to do |format|
       format.html # index.html.erb
@@ -23,75 +26,14 @@ class PapersController < ApplicationController
   # GET /papers/1
   # GET /papers/1.xml
   def show
-    @paper = Paper.find_rest(params[:id])
-
+    @paper = nil
+    @paper = plugin_routes(:paper,:one,params)
+    @paper = Paper.find_rest(params[:id]) if @paper.nil?
+    
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @paper }
     end
   end
   
-  ### DISABLED
-  
-  # GET /papers/new
-  # GET /papers/new.xml
-  def new
-    @paper = Paper.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @paper }
-    end
-  end
-
-  # GET /papers/1/edit
-  def edit
-    @paper = Paper.find(params[:id])
-  end
-
-  # POST /papers
-  # POST /papers.xml
-  def create
-    @paper = Paper.new(params[:paper])
-
-    respond_to do |format|
-      if @paper.save
-        flash[:notice] = 'Paper was successfully created.'
-        format.html { redirect_to(@paper) }
-        format.xml  { render :xml => @paper, :status => :created, :location => @paper }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @paper.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
-  # PUT /papers/1
-  # PUT /papers/1.xml
-  def update
-    @paper = Paper.find(params[:id])
-
-    respond_to do |format|
-      if @paper.update_attributes(params[:paper])
-        flash[:notice] = 'Paper was successfully updated.'
-        format.html { redirect_to(@paper) }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @paper.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /papers/1
-  # DELETE /papers/1.xml
-  def destroy
-    @paper = Paper.find(params[:id])
-    @paper.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(papers_url) }
-      format.xml  { head :ok }
-    end
-  end
 end
