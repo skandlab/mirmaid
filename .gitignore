@@ -5,6 +5,7 @@ models.*
 log.txt
 index/*
 doc/*
+db/schema.rb
 public/MIRBASE_README
 public/*html
 public/javascripts/all.js
