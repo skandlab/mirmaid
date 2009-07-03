@@ -4,6 +4,10 @@ log/*
 models.*
 log.txt
 index/*
+doc/*
 public/MIRBASE_README
+public/*html
+public/javascripts/all.js
 tempbuffer
 config/mirmaid_config.yml
+vendor/plugins/mirmaid*

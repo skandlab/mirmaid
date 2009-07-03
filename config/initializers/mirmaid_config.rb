@@ -1,7 +1,8 @@
 
 module Mirmaid
   class Config
-
+    
+    attr :plugin_routes
     attr :mirbase_data_dir
     attr :mirbase_version
     attr :mirbase_local_data
@@ -13,6 +14,7 @@ module Mirmaid
     attr :log_level
     
     def initialize
+      @plugin_routes = Hash.new {|h,k| h[k]=[]}
       setup = YAML.load_file(RAILS_ROOT + "/config/mirmaid_config.yml") || raise("Missing config/mirmaid_config.yml file")
       
       # mirmaid
@@ -27,7 +29,7 @@ module Mirmaid
       
       # web
       @ferret_enabled = setup['web']['ferret']
-      @ferret_models = [Species,Mature,Precursor]
+      @ferret_models = [:species,:mature,:precursor]
       # as of passenger 2.2.3, there is no need to set
       # relative_url_root anymore: http://code.google.com/p/phusion-passenger/issues/detail?id=169
       @web_relative_url_root = setup['web']['relative_url_root']
@@ -42,17 +44,32 @@ module Mirmaid
       # described routes
       require 'described_routes/rails_controller'
       hide_routes = [/^ferret_search\S*$/,/^pubmed_papers$/,/^home$/,/^root$/,/^search$/]
-      DescribedRoutes::RailsRoutes.parsed_hook = lambda {|a| a.reject{|h| hide_routes.any?{|x| h["name"] =~ x}}}
-
+      DescribedRoutes::RailsRoutes.parsed_hook = lambda {|a| a.reject{|h| hide_routes.any?{|x| h["name"] =~ x}}}  
     end
+
+    def add_plugin_route(core_model,plugin_model,rel,options=nil)
+      # we could allow override of defaults in options hash ...
+      # check default parameters
+      core_model.to_s.classify.constantize # raises NameError exception if class is not defined
+      plugin_model.to_s.classify.constantize
+      raise "error: plugin route #{core_model}<->#{plugin_model} ill defined" if rel.size != 2 or rel.select{|x| x == :one or x == :many}.size != 2
+      
+      rt = {:core_model=>core_model,:plugin_model=>plugin_model,:rel=>rel}
+      
+      # association method to access core_model from plugin_model: plugin_model.plugin_method
+      rt[:plugin_method] = rel[0] == :one ? core_model.to_s : core_model.to_s.pluralize.to_s
+      # association method to access plugin_model from core_model: core_model.core_method
+      rt[:core_method] = rel[1] == :one ? plugin_model.to_s : plugin_model.to_s.pluralize.to_s
+      
+      # convention: partial to be used is list_for_class
+      rt[:partial] = plugin_model.to_s.pluralize+"/"+"list_for_#{core_model}" if !rt.key?(:partial)
+           
+      @plugin_routes[core_model] << rt
+    end
+    
   end
 end
 
 MIRMAID_CONFIG = Mirmaid::Config.new()
 
-#overload ferret_enabled?
-#class ActiveRecord::Base
-#  def self.ferret_enabled?
-#    MIRMAID_CONFIG.ferret_enabled
-#  end
-#end
+

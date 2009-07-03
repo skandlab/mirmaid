@@ -77,15 +77,19 @@ namespace :mirmaid do
       pbar = ProgressBar.new("CTRL-C ...", wait_secs)
       wait_secs.times {|i| pbar.inc; sleep 1; }
       pbar.finish
-
-      case config['adapter']
-      when 'mysql'
-        ActiveRecord::Base.connection.drop_database config['database']
-      when 'sqlite3'
-        Rake::Task['db:drop'].invoke
-      when 'postgresql'
-        puts "psql will now prompt for your database user password (you might need superuser permissions to drop database)"
-        system "dropdb -h #{config['host']} #{config['database']}" or raise('DB could not be dropped')
+      
+      begin
+        case config['adapter']
+        when 'mysql'
+          ActiveRecord::Base.connection.drop_database config['database']
+        when 'sqlite3'
+          Rake::Task['db:drop'].invoke
+        when 'postgresql'
+          puts "psql will now prompt for your database user password (you might need superuser permissions to drop database)"
+          system "dropdb -h #{config['host']} #{config['database']}" or raise('DB could not be dropped')
+        end
+      rescue
+        # nothing to drop
       end
     end
   
@@ -104,7 +108,7 @@ namespace :mirmaid do
             
       puts "\n >>> (Re)building ferret indexes"
       puts " >>> this step can take some time ..."
-      models = MIRMAID_CONFIG.ferret_models
+      models = MIRMAID_CONFIG.ferret_models.map{|x| x.camelcase.constantize}
       models.each_with_index do |m,i|
         puts "Model #{i+1} of #{models.size}: " + m.name
         m.rebuild_index

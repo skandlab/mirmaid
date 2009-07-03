@@ -53,6 +53,8 @@
 <%= render :partial => 'shared/pubmed_query', :object => @precursor.name[/-(.+)/,1] %>
 </div></div>
 
+<%= render :partial => "shared/plugin_views", :object => @precursor %>
+
 </div> <!-- /col -->
 <div id="col-bottom"></div>
 
