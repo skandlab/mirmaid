@@ -24,7 +24,7 @@ class PrecursorsController < ApplicationController
       @precursors = PrecursorExternalSynonym.find_rest(params[:precursor_external_synonym_id]).precursors
     else
       # index nested resource from plugin resource
-      @precursors = plugin_routes(:precursor,:many,params)
+      @precursors = find_from_plugin_routes(:precursor,:many,params)
     end
     
     respond_to do |format|
@@ -44,7 +44,7 @@ class PrecursorsController < ApplicationController
       end
       format.xml do
         @precursors = Precursor.find(:all) if !@precursors
-        render :xml => @precursors
+        render :xml => @precursors.to_xml(:only => Precursor.column_names)
       end
       format.fa do
         @precursors = Precursor.find(:all) if !@precursors
@@ -60,13 +60,13 @@ class PrecursorsController < ApplicationController
     @precursor = nil
     
     # show nested resource from plugin resource
-    @precursor = plugin_routes(:precursor,:one,params)
+    @precursor = find_from_plugin_routes(:precursor,:one,params)
     
     @precursor = Precursor.find_rest(params[:id]) if @precursor.nil?
         
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @precursor }
+      format.xml  { render :xml => @precursor.to_xml(:only => Precursor.column_names) }
       format.fa { render :layout => false, :text => ">#{@precursor.name}\r\n#{@precursor.sequence}"}
     end
   end

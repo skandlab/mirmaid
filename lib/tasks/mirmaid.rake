@@ -29,6 +29,7 @@ namespace :mirmaid do
                   'mirmaid:mirbase:load',
                   'db:migrate',
                   'mirmaid:test:units',
+                  'mirmaid:test:rest',
                   'mirmaid:ferret:index']
   
   desc 'Drop and load MirMaid database defined by RAILS_ENV.'
@@ -97,7 +98,7 @@ namespace :mirmaid do
  
   namespace :ferret do
     
-    desc "[1] (re)build ferret indexes"
+    desc "(re)build ferret indexes"
     task :index  => :environment do      
       
       #touch file config/ferret_enabled
@@ -118,7 +119,7 @@ namespace :mirmaid do
   
   namespace :mirbase do
 
-    desc "[1] fetch miRBase data from local dir or ftp site, copy to tmp/mirbase-data/"
+    desc "Fetch miRBase data from local dir or ftp site, copy to tmp/mirbase-data/"
     task :fetch  => :environment do
       puts "\n >>> Fetching miRBase data ..."
 
@@ -154,7 +155,7 @@ namespace :mirmaid do
       
     end
 
-    desc "[2] load raw miRBase tables and data"
+    desc "Load raw miRBase tables and data"
     task :load  => :environment do
       
       mirbase_data_dir = MIRMAID_CONFIG.mirbase_data_dir

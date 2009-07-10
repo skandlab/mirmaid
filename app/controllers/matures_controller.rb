@@ -20,7 +20,7 @@ class MaturesController < ApplicationController
       @matures = SeedFamily.find_rest(params[:seed_family_id]).matures
     else
       # index nested resource from plugin resource
-      @matures = plugin_routes(:mature,:many,params)
+      @matures = find_from_plugin_routes(:mature,:many,params)
     end  
 
     respond_to do |format|
@@ -40,7 +40,7 @@ class MaturesController < ApplicationController
       end
       format.xml do
         @matures = Matures.find(:all) if !@matures
-        render :xml => @matures
+        render :xml => @matures.to_xml(:only => Mature.column_names)
       end
       format.fa do
         @matures = Matures.find(:all) if !@matures
@@ -55,13 +55,13 @@ class MaturesController < ApplicationController
     @mature = nil
     
     # show nested resource from plugin resource
-    @mature = plugin_routes(:mature,:one,params)
+    @mature = find_from_plugin_routes(:mature,:one,params)
     
     @mature = Mature.find_rest(params[:id]) if @mature.nil?
         
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @mature }
+      format.xml  { render :xml => @mature.to_xml(:only => Mature.column_names) }
       format.fa { render :layout => false, :text => ">#{@mature.name}\r\n#{@mature.sequence}"}
     end
   end

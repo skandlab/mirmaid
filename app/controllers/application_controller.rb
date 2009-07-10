@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
     
   private
 
-  def plugin_routes(model,rel,params)
+  def find_from_plugin_routes(model,rel,params)
 
     MIRMAID_CONFIG.plugin_routes[model].each do |pr|
       next if pr[:rel][0] != rel

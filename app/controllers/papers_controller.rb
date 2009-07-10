@@ -12,14 +12,14 @@ class PapersController < ApplicationController
       @papers = Species.find_rest(params[:species_id]).papers
     else
       # index nested resource from plugin resource
-      @papers = plugin_routes(:paper,:many,params)
+      @papers = find_from_plugin_routes(:paper,:many,params)
     end
 
     @papers = Paper.find(:all) if @papers.nil?
     
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @papers }
+      format.xml  { render :xml => @papers.to_xml(:only => Paper.column_names) }
     end
   end
 
@@ -27,12 +27,12 @@ class PapersController < ApplicationController
   # GET /papers/1.xml
   def show
     @paper = nil
-    @paper = plugin_routes(:paper,:one,params)
+    @paper = find_from_plugin_routes(:paper,:one,params)
     @paper = Paper.find_rest(params[:id]) if @paper.nil?
     
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @paper }
+      format.xml  { render :xml => @paper.to_xml(:only => Paper.column_names) }
     end
   end
   

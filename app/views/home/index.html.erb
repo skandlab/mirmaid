@@ -1,10 +1,19 @@
 <div id="col-top"></div>    
 <div id="col">
 
-  <h1>MirMaid beta</h1>
+  <h2>MirMaid beta</h2>
 
   <p>This is a pre-release of MirMaid. Read more about MirMaid at the <a href="http://www.mirmaid.org">www.mirmaid.org</a>.</p>
   
+  <% if !MIRMAID_CONFIG.plugin_menu.empty?%>
+  <h2>Active plugins</h2>
+    <table class="info">
+      <% MIRMAID_CONFIG.plugin_menu.each do |plugin_name,resources| %>
+      <tr><%= "<th>"+plugin_name + "</th><td>" + resources.map{|x| link_to x, ("/"+x)}.join(", ") + "<td>"%></tr>
+      <% end %>
+    </table>
+  <% end %>
+
   <h2>miRBase release information</h2>
 
   <p>This MirMaid server is build on the following <a href="http://microrna.sanger.ac.uk/sequences/">miRBase</a> release:</p>

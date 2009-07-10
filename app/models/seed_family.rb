@@ -15,5 +15,8 @@ class SeedFamily < ActiveRecord::Base
     return (self.find_by_name(id.to_s) or self.find(id))
   end
 
-  
+  def to_param
+    self.name
+  end
+ 
 end

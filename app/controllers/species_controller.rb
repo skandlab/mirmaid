@@ -11,7 +11,7 @@ class SpeciesController < ApplicationController
       @species = Paper.find_rest(params[:paper_id]).species
     else
       # index nested resource from plugin resource
-      @species = plugin_routes(:species,:many,params)
+      @species = find_from_plugin_routes(:species,:many,params)
     end
 
     respond_to do |format|
@@ -31,7 +31,7 @@ class SpeciesController < ApplicationController
       end
       format.xml do
         @species = Species.find(:all) if !@species
-        render :xml => @species
+        render :xml => @species.to_xml(:only => Species.column_names)
       end
     end       
     
@@ -48,14 +48,14 @@ class SpeciesController < ApplicationController
       @species = Mature.find_rest(params[:mature_id]).precursor.species
     else
       # show nested resource from plugin resource
-      @species = plugin_routes(:species,:one,params)
+      @species = find_from_plugin_routes(:species,:one,params)
     end
 
     @species = Species.find_rest(params[:id]) if @species.nil?
     
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @species }
+      format.xml  { render :xml => @species.to_xml(:only => Species.column_names) }
     end
   end
   

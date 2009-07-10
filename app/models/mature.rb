@@ -14,7 +14,6 @@
 class Mature < ActiveRecord::Base
   has_and_belongs_to_many :precursors
   has_and_belongs_to_many :seed_families
-#  has_many :m2d_disease_links
  
   acts_as_ferret :fields => {
     :name => {:store => :yes, :boost => 4},
@@ -31,13 +30,13 @@ class Mature < ActiveRecord::Base
   def self.ferret_enabled?
     MIRMAID_CONFIG.ferret_enabled
   end
-  
+
   def to_param
     self.name
   end
   
   def self.find_rest(id)
-    return (self.find_by_name(id.to_s) or self.find(id.to_i))
+    return (self.find_by_name(id.to_s) or self.find(id))
   end
 
   # dynamic fuzzy name search

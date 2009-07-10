@@ -6,6 +6,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :species, :only => [:index,:show] do |species|
     species.resources :precursors, :only => [:index]
     species.resources :matures, :only => [:index]
+    species.resources :seed_families, :only => [:index]
     species.resources :papers, :only => [:index]
     MIRMAID_CONFIG.plugin_routes[:species].each do |pr|
       if pr[:rel][1] == :one

@@ -3,6 +3,8 @@ module Mirmaid
   class Config
     
     attr :plugin_routes
+    attr :plugin_resources
+    attr :plugin_menu
     attr :mirbase_data_dir
     attr :mirbase_version
     attr :mirbase_local_data
@@ -16,6 +18,8 @@ module Mirmaid
     
     def initialize
       @plugin_routes = Hash.new {|h,k| h[k]=[]}
+      @plugin_resources = Hash.new
+      @plugin_menu = Hash.new {|h,k| h[k]=[]}
       setup = YAML.load_file(RAILS_ROOT + "/config/mirmaid_config.yml") || raise("Missing config/mirmaid_config.yml file")
       
       # mirmaid
@@ -49,14 +53,20 @@ module Mirmaid
       hide_routes = [/^ferret_search\S*$/,/^pubmed_papers$/,/^home$/,/^root$/,/^search$/]
       DescribedRoutes::RailsRoutes.parsed_hook = lambda {|a| a.reject{|h| hide_routes.any?{|x| h["name"] =~ x}}}  
     end
-
+    
+    def add_plugin_resource(plugin_name,resource,options=nil)
+      @plugin_resources[resource.to_s.pluralize.to_sym] = plugin_name
+      @plugin_menu[plugin_name] << resource.to_s.pluralize
+    end
+    
     def add_plugin_route(core_model,plugin_model,rel,options=nil)
       # we could allow override of defaults in options hash ...
       # check default parameters
       core_model.to_s.classify.constantize # raises NameError exception if class is not defined
       plugin_model.to_s.classify.constantize
+
       raise "error: plugin route #{core_model}<->#{plugin_model} ill defined" if rel.size != 2 or rel.select{|x| x == :one or x == :many}.size != 2
-      
+            
       rt = {:core_model=>core_model,:plugin_model=>plugin_model,:rel=>rel}
       
       # association method to access core_model from plugin_model: plugin_model.plugin_method

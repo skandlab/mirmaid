@@ -47,16 +47,18 @@ ul.ul-list span.date {padding-right:10px;}
     #header {position:relative; height:75px; padding:0px 20px 0px 20px;}
 
         #logo {margin:0;position:relative;bottom:20px;}
-        #nav {position:absolute; bottom:5px; right:20px; margin:0px; font-size: 135%;}
+        #nav {position:absolute; bottom:5px; right:20px; margin:0px; font-size: 125%;}
         #nav span {margin:0 8px;}
         #nav #nav-active {font-weight:bold; text-decoration:none;}
     
     #tray {position:relative; width:960px; height:45px; background:url("../design/tray.gif") 0 0 no-repeat; overflow:visible; font:bold 90%/1 "tahoma",sans-serif;}
-    #tray ul {margin:0 20px; list-style:none;}
+    #tray ul {margin:0 10px; list-style:none;}
     #tray li {display:inline;}
-    #tray li a {display:block; float:left; padding:17px 20px 17px 18px; background:url("../design/tray-separator.gif") 100% 0 no-repeat; text-decoration:none;}
+    #tray li a {display:block; float:left; padding:17px 20px 15px 18px; background:url("../design/tray-separator.gif") 100% 0 no-repeat; text-decoration:none;}
     #tray li a:hover {background:url("../design/tray-hover.gif");}
     #tray li#tray-active a {background:url("../design/tray-active.gif");}
+    #tray li a#flyout {padding:17px 20px 11px 18px;}
+    #tray li a#flyout span {display:inline; float:left;}
 
         #search {position:absolute; top:8px; right:20px;} /* 20 */
         #search div {position:relative; width:185px;}
