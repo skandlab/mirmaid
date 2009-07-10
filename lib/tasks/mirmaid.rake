@@ -63,7 +63,7 @@ namespace :mirmaid do
         #puts "Creating a sqlite3 database named #{config['database']}"
         Rake::Task['db:create'].invoke
       when 'postgresql'
-        puts "psql will now prompt for your database user password (you might need superuser permissions to create database)"
+        puts "psql will now prompt for your user password (you might need superuser permissions to create database)"
         system "createdb -h #{config['host']} #{config['database']} -E utf8" or raise('DB could not be created')
       end
     end
@@ -86,7 +86,7 @@ namespace :mirmaid do
         when 'sqlite3'
           Rake::Task['db:drop'].invoke
         when 'postgresql'
-          puts "psql will now prompt for your database user password (you might need superuser permissions to drop database)"
+          puts "psql will now prompt for your user password (you might need superuser permissions to drop database)"
           system "dropdb -h #{config['host']} #{config['database']}" or raise('DB could not be dropped')
         end
       rescue
@@ -109,7 +109,7 @@ namespace :mirmaid do
             
       puts "\n >>> (Re)building ferret indexes"
       puts " >>> this step can take some time ..."
-      models = MIRMAID_CONFIG.ferret_models.map{|x| x.camelcase.constantize}
+      models = MIRMAID_CONFIG.ferret_models.map{|x| x.to_s.camelcase.constantize}
       models.each_with_index do |m,i|
         puts "Model #{i+1} of #{models.size}: " + m.name
         m.rebuild_index
