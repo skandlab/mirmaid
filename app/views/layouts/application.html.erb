@@ -7,12 +7,8 @@
   <title><%= @title || (controller.controller_name + " : " + controller.action_name) %></title>
   <%= stylesheet_link_tag "css/reset","css/main","css/style","css/fg.menu","jquery-ui-themes/overcast/jquery-ui-1.7.2.custom", :media => 'screen,projection' %>
   <link rel="shortcut icon" href=<%= image_path("favicon.png") %> />
-  <%= javascript_include_tag :defaults, 'jquery-1.3.2.min', 'jquery-ui-1.7.2.custom.min', 'fg.menu', 'application', :cache => true %>
-
-<!-- jquery theme selector -->
-<!-- <script type="text/javascript" src="http://ui.jquery.com/applications/themeroller/themeswitchertool/"></script> -->
-<!-- <script type="text/javascript"> $(function(){ $('<div style="position: absolute; top: 20px; right: 300px;" />').appendTo('body').themeswitcher(); }); </script> -->
-<!-- -->
+  <%# javascript caching not working with jquery in production mode %>
+  <%= javascript_include_tag :defaults, 'jquery-1.3.2.min', 'jquery-ui-1.7.2.custom.min', 'fg.menu', 'application', :cache => false %>
 </head>
 <body>
 
@@ -56,7 +52,7 @@
         <div id="plugin-list" class="hidden">
           <ul>
             <% MIRMAID_CONFIG.plugin_menu.each do |plugin_name,resources| %>
-            <li><a><%= plugin_name %></a>
+            <li><a href=""><%= plugin_name %></a>
             <ul>
               <% resources.each do |res_name| %>
               <li><a href="<%= "/" + res_name %>"><%= res_name %></a></li>
@@ -90,14 +86,6 @@
   <p style="color: green"><%= flash[:notice] %></p>
   
 <%= yield  %>
-
-<!-- Footer
-<div id="footer">
-
-  <p class="f-right">blabla</p>
-  
-</div> 
- footer -->
 
 </div>
 
