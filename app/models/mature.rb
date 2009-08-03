@@ -76,7 +76,12 @@ class Mature < ActiveRecord::Base
   
   def precursor
     self.precursors.first # pick first if there are multiple precursors
-  end   
+  end
+  
+  # return sequence as Bio::NA sequence
+  def seq
+    return Bio::Sequence::NA.new(sequence)
+  end
   
   def seed_family_members
     #return hash: seed seq => [matures]

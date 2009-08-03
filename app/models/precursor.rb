@@ -69,27 +69,37 @@ class Precursor < ActiveRecord::Base
       pres = self.find_best_by_name(newname) if !newname.nil?
     end
     return pres    
-  end  
-  
+  end
+
+  # return sequence as Bio::NA sequence
+  def seq
+    return Bio::Sequence::NA.new(sequence)
+  end
+
+  # return associated mature names in comma separeted string
   def mature_names
     self.matures.sort_by{|x| x.name}.map{|x| x.name}.join(', ')
   end
-
+  
+  # return chromosome of genome position
   def xsome
     p = self.genome_positions.first
     p.nil? ? "NA" : p.xsome
   end
-
+  
+  # return contig_start of genome position
   def contig_start
     p = self.genome_positions.first
     p.nil? ? nil : p.contig_start.to_i
   end
-
+  
+  # return genomic coordinates as combined string
   def genome_coords
     p = self.genome_positions.first
     p.nil? ? "NA" : p.xsome + p.strand.to_s.strip + ":" + p.contig_start.to_s + "-" + p.contig_end.to_s
   end
-  
+
+  # find nearby precursors, max <dist> nucleutides away
   def nearby_precursors(dist=10000)
     posa = self.genome_positions
     neighbours = []
@@ -101,7 +111,6 @@ class Precursor < ActiveRecord::Base
     end
 
     return neighbours.uniq-[self]
-    
   end
   
 end
