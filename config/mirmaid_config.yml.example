@@ -18,7 +18,7 @@ mirmaid:
 mirbase:
   version: CURRENT
   local_data: 
-  remote_data: ftp://ftp.sanger.ac.uk/pub/mirbase/sequences/
+  remote_data: ftp://mirbase.org/pub/mirbase/
 
 ## Web server configuration
 # ferret: Ferret search engine, only recommended if web interface is to be used [true/false]

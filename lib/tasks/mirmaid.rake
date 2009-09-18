@@ -137,8 +137,9 @@ namespace :mirmaid do
         # wget remote files
         raise "'wget' command not found" if !system("wget --version > /dev/null") # check that wget is available
         puts " copying remote miRBase data ..."
-        system("wget -q -nc -nv -P #{mirbase_data_dir} ftp://ftp.sanger.ac.uk/pub/mirbase/sequences/#{mirbase_version}/database_files/*") or raise $?
-        system("wget -q -nc -nv -P #{mirbase_data_dir} ftp://ftp.sanger.ac.uk/pub/mirbase/sequences//#{mirbase_version}/README") or raise $?
+	wget_cmd = "wget -q -nc -nv -P #{mirbase_data_dir} #{MIRMAID_CONFIG.mirbase_remote_data}/#{mirbase_version}/"
+        system("#{wget_cmd}database_files/*") or raise ("wget error, check URL: " + wget_cmd)
+        system("#{wget_cmd}README") or raise ("wget error, check URL: " + wget_cmd)
       end
 
       # unzip if needed
@@ -187,16 +188,16 @@ namespace :mirmaid do
         sleep 5;
         psql = "psql -h #{host} -d #{database} -U #{username}"
         system("cat #{mirbase_data_dir}tables.sql | #{sed} | #{RAILS_ROOT}/script/mysql_to_postgres.rb | #{psql}") or
-          raise("Error reading table definitions: " + $?)
+          raise("Error reading table definitions: " + $!.to_s)
         Dir["#{mirbase_data_dir}*.txt"].each do |f|
           table = (File.basename(f,".txt"))
           puts table
-          system("cat #{f} | #{psql} -c \'copy #{table} from stdin\'") or raise ("Error loading miRBase data: " + $?)
+          system("cat #{f} | #{psql} -c \'copy #{table} from stdin\'") or raise ("Error loading miRBase data: " + $!.to_s)
         end
       when "sqlite3"
         system("cat #{mirbase_data_dir}tables.sql | #{sed} | #{RAILS_ROOT}/script/mysql_to_postgres.rb > #{mirbase_data_dir}/sqlite_tables.sql") or
           raise("Error reading table definitions: " + $?)
-        system("sqlite3 -init #{mirbase_data_dir}/sqlite_tables.sql #{database} '.exit'") or raise("sqlite3 table definitions error: " + $?)
+        system("sqlite3 -init #{mirbase_data_dir}/sqlite_tables.sql #{database} '.exit'") or raise("sqlite3 table definitions error: " + $!.to_s)
         sqlite_data_script = File.new("#{mirbase_data_dir}/sqlite_data.script","w")
         sqlite_data_script.puts ".separator '\t'"
         Dir["#{mirbase_data_dir}*.txt"].each do |f|
@@ -204,12 +205,12 @@ namespace :mirmaid do
           sqlite_data_script.puts ".import \'#{f}\' #{table}"
         end
         sqlite_data_script.close
-        system("sqlite3 #{database} '.read #{mirbase_data_dir}/sqlite_data.script'") or raise("sqlite3 data error: " + $?)
+        system("sqlite3 #{database} '.read #{mirbase_data_dir}/sqlite_data.script'") or raise("sqlite3 data error: " + $!.to_s)
       when "mysql"
         puts "mysql will prompt for your password twice:"
         mysql = "mysql -u #{username} -p #{database}"
-        system("cat #{mirbase_data_dir}tables.sql | #{sed} | #{mysql}") or raise ('Error loading table definitions: ' + $?)
-        system("mysqlimport -u #{username} -p #{database} -L #{mirbase_data_dir}*.txt") or raise('Error loading miRbase data : ' + $?)
+        system("cat #{mirbase_data_dir}tables.sql | #{sed} | #{mysql}") or raise ('Error loading table definitions: ' + $!.to_s)
+        system("mysqlimport -u #{username} -p #{database} -L #{mirbase_data_dir}*.txt") or raise('Error loading miRbase data : ' + $!.to_s)
       else
         raise "MirMaid unsupported database: #{adapter}"
       end
