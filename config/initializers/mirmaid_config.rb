@@ -1,6 +1,10 @@
 
 module Mirmaid
   class Config
+
+    def version
+      1.0
+    end
     
     attr :plugin_routes
     attr :plugin_resources
@@ -15,7 +19,7 @@ module Mirmaid
     attr :google_analytics_tracker
     attr :google_analytics_domain
     attr :log_level
-    
+   
     def initialize
       @plugin_routes = Hash.new {|h,k| h[k]=[]}
       @plugin_resources = Hash.new

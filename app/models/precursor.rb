@@ -22,6 +22,7 @@ class Precursor < ActiveRecord::Base
   has_and_belongs_to_many :precursor_clusters
   has_and_belongs_to_many :papers
   has_many :precursor_external_synonyms
+  has_many :papers_precursors # dummy association, used at load time to construct proper references in description field
 
   acts_as_ferret :fields => {
     :name => {:store => :yes, :boost => 4},

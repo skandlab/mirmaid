@@ -6,7 +6,10 @@ class HomeController < ApplicationController
   
   def index
     @title = "MirMaid"
-    @mirbase_readme = File.open(RAILS_ROOT+"/public/MIRBASE_README").readlines
+    # @mirbase_readme = File.open(RAILS_ROOT+"/public/MIRBASE_README").readlines
+    header = File.open(RAILS_ROOT+"/public/MIRBASE_README").readline
+    @mirbase_version = header.match(/Release\s(\d.*)$/).to_a.last
+    @mirmaid_version = MIRMAID_CONFIG.version
   end
   
 end

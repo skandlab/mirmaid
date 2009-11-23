@@ -46,7 +46,7 @@ ul.ul-list span.date {padding-right:10px;}
 
     #header {position:relative; height:75px; padding:0px 20px 0px 20px;}
 
-        #logo {margin:0;position:relative;bottom:20px;}
+        #logo {margin:0;position:relative;top:12px;}
         #nav {position:absolute; bottom:5px; right:20px; margin:0px; font-size: 125%;}
         #nav span {margin:0 8px;}
         #nav #nav-active {font-weight:bold; text-decoration:none;}

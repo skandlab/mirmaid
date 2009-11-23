@@ -74,6 +74,7 @@ class MirbaseToMibase < ActiveRecord::Migration
     rename_table :mirna_literature_references, :papers_precursors
     rename_column :papers_precursors, :auto_mirna, :precursor_id
     rename_column :papers_precursors, :auto_lit, :paper_id
+    #add_column :paper_ref_id, :id, :primary_key
     
     # seed families
 
@@ -115,11 +116,33 @@ class MirbaseToMibase < ActiveRecord::Migration
 
     add_index :seed_families, :id, :unique => true
     add_index :seed_families, :name, :unique => true
+
+    # precursor descriptions, update references
+    puts "##### precursors, updating description literature references"
+
+    pbar = ProgressBar.new("progress", Precursor.count)
+    ActiveRecord::Base.transaction do # speed up
+      Precursor.find_each(:batch_size => 100) do |p|
+        pbar.inc
+        next if p.description == ""
+        refs = Hash.new
+        p.papers_precursors.each do |pp|
+          paper = Paper.find(pp.paper_id)
+          year = paper.journal.scan(/\((\d\d\d\d)\)\./).first
+          refs[pp.order_added] = "(" + paper.author.split(",").first + " " + (year ? year.first : "") + ")"
+        end
+        
+        refs.each do |rid,ref|
+          p.comment = p.comment.gsub("[#{rid}]",ref)
+        end
+        p.save
+      end
+    end
+    pbar.finish
        
     puts "##### precursor <-> precursor families"
     # precursor > precursor_families
-    # we take the mirbase precursor<->precursor_family many-many mapping and
-    # makes it many-one.
+    # we take the mirbase precursor<->precursor_family many-many mapping and makes it many-one.
     # As of miRBase 12.0, there are no precursors with multiple
     # families - meaning that precursor_id in precfams is unique
     

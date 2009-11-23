@@ -1,12 +1,14 @@
 <div id="col-top"></div>    
 <div id="col">
 
-  <h2>MirMaid beta</h2>
+  <h2>miRMaid</h2>
 
-  <p>This is a pre-release of MirMaid. Read more about MirMaid at the <a href="http://www.mirmaid.org">www.mirmaid.org</a>.</p>
+  <p>This is release <a href="http://www.mirmaid.org/doku.php?id=release_notes"><%= @mirmaid_version %></a> of miRMaid.</p>
+  <p>Read more about miRMaid at the community wiki, <a href="http://www.mirmaid.org">www.mirmaid.org</a>.</p>
   
   <% if !MIRMAID_CONFIG.plugin_menu.empty?%>
   <h2>Active plugins</h2>
+  <P> The following plugins are activated. </p>
     <table class="info">
       <% MIRMAID_CONFIG.plugin_menu.each do |plugin_name,resources| %>
       <tr><%= "<th>"+plugin_name + "</th><td>" + resources.map{|x| link_to x, ("/"+x)}.join(", ") + "<td>"%></tr>
@@ -16,9 +18,7 @@
 
   <h2>miRBase release information</h2>
 
-  <p>This MirMaid server is build on the following <a href="http://microrna.sanger.ac.uk/sequences/">miRBase</a> release:</p>
+  <p>This miRMaid server is build on release <%= @mirbase_version %> of <a href="http://www.mirbase.org">miRBase</a>.</p>
 
-  <%= text_area_tag 'mirbase_readme', @mirbase_readme.join(""), :disabled => true, :rows => 15, :cols => 70 %>
-  
 </div> <!-- /col -->
 <div id="col-bottom"></div>
