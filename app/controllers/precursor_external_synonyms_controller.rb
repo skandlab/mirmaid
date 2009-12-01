@@ -1,4 +1,5 @@
 class PrecursorExternalSynonymsController < ApplicationController
+  layout "application"
   # GET /precursor_external_synonyms
   # GET /precursor_external_synonyms.xml
   def index

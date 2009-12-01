@@ -3,13 +3,17 @@
 
 <h3>Listing precursors</h3>
 
-<div id="searchinfo"><%= "Found " + @precursors.total_entries.to_s + " precursor(s)" %></div>
+<div id="searchinfo"><%= page_entries_info @precursors %></div>
 
 <% form_tag({:action => :index}, :method => :get) do %>
 <div id="autocomplete"><%= render :partial=>"shared/search_pane" %></div>
 <% end %>
+<br>
   
-<%= will_paginate @precursors, :params => params %>
+<%= will_paginate @precursors, :params => params, :style => 'display:inline' %>
+<% if @precursors.total_pages > 1 %>
+(<%= link_to('list all', :action => 'index', :show => @precursors.total_entries, :show_page => 1, :params => params)%>)
+<% end %>
 
 <% if !@precursors.empty? %>
 <table class="search">

@@ -1,4 +1,6 @@
 class PapersController < ApplicationController
+  layout "application"
+
   # GET /papers
   # GET /papers.xml
   def index

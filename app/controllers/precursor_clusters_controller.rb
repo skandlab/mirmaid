@@ -1,4 +1,5 @@
 class PrecursorClustersController < ApplicationController
+  layout "application"
   # GET /precursor_clusters
   # GET /precursor_clusters.xml
   def index

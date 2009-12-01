@@ -16,16 +16,17 @@ class SpeciesController < ApplicationController
 
     respond_to do |format|
       format.html do
-        params[:page] ||= 1
+        per_page = (params[:show] || 12).to_i
+        page = params[:show_page] || params[:page] || 1
         @query = (params[:search] && params[:search][:query]) ? params[:search][:query] : ""
         
         if @query != ""
-          @species = Species.find_with_ferret(@query, :page => params[:page], :per_page => 12,:sort => :taxonomy_for_sort,:lazy=>true)
+          @species = Species.find_with_ferret(@query, :page => page, :per_page => per_page,:sort => :taxonomy_for_sort,:lazy=>true)
         else
           if @species # subselect
-            @species = Species.paginate @species.map{|x| x.id}, :page => params[:page], :per_page => 12, :order => :taxonomy
+            @species = Species.paginate @species.map{|x| x.id}, :page => page, :per_page => per_page, :order => :taxonomy
           else #all
-            @species = Species.paginate :page => params[:page], :per_page => 12, :order => :taxonomy
+            @species = Species.paginate :page => page, :per_page => per_page, :order => :taxonomy
           end
         end
       end

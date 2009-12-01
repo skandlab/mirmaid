@@ -1,4 +1,5 @@
 class GenomePositionsController < ApplicationController
+  layout "application"
   # GET /genome_positions
   # GET /genome_positions.xml
   def index

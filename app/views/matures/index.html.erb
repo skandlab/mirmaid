@@ -3,13 +3,17 @@
 
 <h3>Listing matures</h3>
 
-<div id="searchinfo"><%= "Found " + @matures.total_entries.to_s + " mature(s)" %></div>
+<div id="searchinfo"><%= page_entries_info @matures %></div>
 
 <% form_tag({:action => :index}, :method => :get) do %>
 <div id="autocomplete"><%= render :partial=>"shared/search_pane" %></div>
 <% end %>
 <br>  
-<%= will_paginate @matures, :params => params %>
+
+<%= will_paginate @matures, :params => params, :style => 'display:inline' %>
+<% if @matures.total_pages > 1 %>
+(<%= link_to('list all', :action => 'index', :show => @matures.total_entries, :show_page => 1, :params => params)%>)
+<% end %>
 
 <% if !@matures.empty? %>
 <table class="search">

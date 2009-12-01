@@ -163,3 +163,46 @@ table.search tr.odd td{ background:none; background-color: #eee; padding:3px 10p
 #autocomplete li {display:block; font-size:11px; "Arial",sans-serif; margin:0px; padding:1px 0px 1px 5px;}
 #autocomplete li a {display:block; float:none; background-image:none; text-decoration:none;}
 #autocomplete li a:hover {background-image:none; background-color:none; color:black; text-decoration:underline;}
+
+/* message boxes */
+
+/* --------------------------------- */
+	      /*CONTAINER  */
+#container{ 
+    margin:0 auto;
+    margin-top:40px;
+    width:260px;
+}
+
+/* --------------------------------- */
+	/*MESSAGE BOX CLEANserie   */
+.clean-gray{
+    border:solid 1px #DEDEDE; 
+    background:#EFEFEF;
+    color:#222222;
+    padding:4px;
+    text-align:center;
+    }
+.clean-yellow{
+    border:solid 1px #DEDEDE; 
+    background:#FFFFCC;
+    color:#222222;
+    padding:4px;
+    text-align:center;
+    }
+.clean-ok{
+    border:solid 1px #349534; 
+    background:#C9FFCA;
+    color:#008000;
+    font-weight:bold;
+    padding:4px;
+    text-align:center;
+    }
+.clean-error{
+    border:solid 1px #CC0000; 
+    background:#F7CBCA;
+    color:#CC0000;
+    font-weight:bold;
+    padding:4px;
+    text-align:center;
+    }

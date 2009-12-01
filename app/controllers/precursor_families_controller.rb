@@ -1,4 +1,5 @@
 class PrecursorFamiliesController < ApplicationController
+  layout "application"
   # GET /precursor_families
   # GET /precursor_families.xml
   def index

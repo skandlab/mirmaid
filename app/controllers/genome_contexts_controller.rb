@@ -1,4 +1,5 @@
 class GenomeContextsController < ApplicationController
+  layout "application"
   # GET /genome_contexts
   # GET /genome_contexts.xml
   def index

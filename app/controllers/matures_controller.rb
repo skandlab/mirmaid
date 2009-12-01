@@ -25,16 +25,17 @@ class MaturesController < ApplicationController
 
     respond_to do |format|
       format.html do
-        params[:page] ||= 1
+        per_page = params[:show] || 12
+        page = params[:show_page] || params[:page] || 1
         @query = (params[:search] && params[:search][:query]) ? params[:search][:query] : ""
       
         if @query != ""
-          @matures = Mature.find_with_ferret(@query, :page => params[:page], :per_page => 12, :sort => :name_for_sort,:lazy => true)
+          @matures = Mature.find_with_ferret(@query, :page => page, :per_page => per_page, :sort => :name_for_sort,:lazy => true)
         else
           if @matures # subselect
-            @matures = Mature.paginate @matures.map{|x| x.id}, :page => params[:page], :per_page => 12, :order => :name
+            @matures = Mature.paginate @matures.map{|x| x.id}, :page => page, :per_page => per_page, :order => :name
           else #all
-            @matures = Mature.paginate :page => params[:page], :per_page => 12, :order => :name
+            @matures = Mature.paginate :page => page, :per_page => per_page, :order => :name
           end
         end
       end

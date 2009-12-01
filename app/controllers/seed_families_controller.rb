@@ -1,4 +1,5 @@
 class SeedFamiliesController < ApplicationController
+  layout "application"
   # GET /seed_families
   # GET /seed_families.xml
   def index

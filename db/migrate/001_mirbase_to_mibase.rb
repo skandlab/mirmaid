@@ -118,7 +118,7 @@ class MirbaseToMibase < ActiveRecord::Migration
     add_index :seed_families, :name, :unique => true
 
     # precursor descriptions, update references
-    puts "##### precursors, updating description literature references"
+    puts "##### converting literature references"
 
     pbar = ProgressBar.new("progress", Precursor.count)
     ActiveRecord::Base.transaction do # speed up
@@ -129,13 +129,42 @@ class MirbaseToMibase < ActiveRecord::Migration
         p.papers_precursors.each do |pp|
           paper = Paper.find(pp.paper_id)
           year = paper.journal.scan(/\((\d\d\d\d)\)\./).first
-          refs[pp.order_added] = "(" + paper.author.split(",").first + " " + (year ? year.first : "") + ")"
+          refs[pp.order_added] = paper.author.split(",").first + " " + (year ? year.first : "")
         end
-        
-        refs.each do |rid,ref|
-          p.comment = p.comment.gsub("[#{rid}]",ref)
+
+        # matures experiment field
+        p.matures.each do |mat|
+          #puts mat.experiment
+          mat.experiment = mat.experiment.gsub('\N',"")
+          mat_refs = mat.experiment.scan(/\[([0-9\,\-]+)\]/).map{|x| x.first}.each do |ori_ref|
+            refids = []
+            ori_ref.split(',').each do |mr|
+              # mr = "1" or "1-3"
+              mrs = mr.split("-").map{|x| x.to_i}
+              mrs = (mrs[0]..mrs[1]).to_a if mrs.size == 2
+              refids += mrs
+            end
+            new_ref = refids.sort.uniq.map{|rid| refs[rid]}.join(", ")
+            mat.experiment = mat.experiment.gsub("[#{ori_ref}]","(" + new_ref + ")")
+          end
+          mat.save
+          #puts mat.experiment
+        end
+       
+        # precursor comment field
+        prec_refs = p.comment.scan(/\[([0-9\,\-]+)\]/).map{|x| x.first}.each do |ori_ref|
+          refids = []
+          ori_ref.split(',').each do |mr|
+            # mr = "1" or "1-3"
+            mrs = mr.split("-").map{|x| x.to_i}
+            mrs = (mrs[0]..mrs[1]).to_a if mrs.size == 2
+            refids += mrs
+          end
+          new_ref = refids.sort.uniq.map{|rid| refs[rid]}.join(", ")
+          p.comment = p.comment.gsub("[#{ori_ref}]","(" + new_ref + ")")
         end
         p.save
+
       end
     end
     pbar.finish
