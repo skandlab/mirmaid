@@ -135,7 +135,7 @@ class MirbaseToMibase < ActiveRecord::Migration
         # matures experiment field
         p.matures.each do |mat|
           #puts mat.experiment
-          mat.experiment |= ""
+          mat.experiment ||= ""
           mat.experiment = mat.experiment.gsub('\N',"")
           mat_refs = mat.experiment.scan(/\[([0-9\,\-]+)\]/).map{|x| x.first}.each do |ori_ref|
             refids = []
