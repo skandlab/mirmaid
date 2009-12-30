@@ -23,7 +23,7 @@
 1) HTML tags
 ---------------------------------------------------------------------------------------------------------- */
 
-body {background:url("../design/bg.gif") 0 0 repeat-x; font:0.8em/1.5 Calibri,"Segoe UI",Candara,sans-serif;}
+body {background:url("../design/bg.gif") 0 0 repeat-x; font: 1.0em/1.5 Calibri,"Segoe UI",Candara,sans-serif;}
 
 h1, h2, h3, h4, h5, h6, p, address, blockquote, table, dl, fieldset {margin:10px 0; }
 
