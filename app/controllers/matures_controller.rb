@@ -40,11 +40,11 @@ class MaturesController < ApplicationController
         end
       end
       format.xml do
-        @matures = Matures.find(:all) if !@matures
+        @matures = Mature.find(:all) if !@matures
         render :xml => @matures.to_xml(:only => Mature.column_names)
       end
       format.fa do
-        @matures = Matures.find(:all) if !@matures
+        @matures = Mature.find(:all) if !@matures
         render :layout => false, :text => @matures.sort_by{|p| p.name}.map{|p| ">#{p.name}\r\n#{p.sequence}"}.join("\r\n")
       end
     end
