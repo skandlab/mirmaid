@@ -12,7 +12,7 @@ def with_local_server(&block)
       puts "testing RESTful API at URL: " + ENV['MIRMAID_URL']
       puts "starting server ..."
       pipe = IO.popen("script/server -p 3023 -e #{ENV["RAILS_ENV"]}")
-      sleep 2
+      sleep 15
       yield
     end
   rescue
