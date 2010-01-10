@@ -50,7 +50,7 @@
         <%= MIRMAID_CONFIG.plugin_resources.key?(cname) ? MIRMAID_CONFIG.plugin_resources[cname] + " : " + cname.to_s : "Plugins" %>
         </a>
         <div class="hidden">
-          <ul id="plugin list">
+          <ul id="plugin-list">
             <% MIRMAID_CONFIG.plugin_menu.each do |plugin_name,resources| %>
             <li><a href=""><%= plugin_name %></a>
             <ul>
