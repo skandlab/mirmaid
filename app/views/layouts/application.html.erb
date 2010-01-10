@@ -49,8 +49,8 @@
         <span class="ui-icon ui-icon-triangle-1-s"></span>
         <%= MIRMAID_CONFIG.plugin_resources.key?(cname) ? MIRMAID_CONFIG.plugin_resources[cname] + " : " + cname.to_s : "Plugins" %>
         </a>
-        <div id="plugin-list" class="hidden">
-          <ul>
+        <div class="hidden">
+          <ul id="plugin list">
             <% MIRMAID_CONFIG.plugin_menu.each do |plugin_name,resources| %>
             <li><a href=""><%= plugin_name %></a>
             <ul>
