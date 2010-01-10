@@ -61,7 +61,7 @@ ul.ul-list span.date {padding-right:10px;}
     #tray li a#flyout {padding-bottom: 11px;}
     #tray li a#flyout span {display:inline; float:left;}
     #flyout {font:bold 100%/1 tahoma,sans-serif;}
-    #plugin-list {fond:bold 75%/1 tahoma,sans-serif;}
+    #plugin-list {font:bold 75%/1 tahoma,sans-serif;}
 
         #search {position:absolute; top:8px; right:20px;} /* 20 */
         #search div {position:relative; width:185px;}
