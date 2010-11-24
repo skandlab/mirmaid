@@ -25,12 +25,13 @@ Rails::Initializer.run do |config|
   # You have to specify the :lib option for libraries, where the Gem
   # name (sqlite3-ruby) differs from the file itself (sqlite3)
   config.gem 'rubaidh-google_analytics', :lib => 'rubaidh/google_analytics', :source => 'http://gems.github.com'
-  config.gem 'mislav-will_paginate', :lib => 'will_paginate', :source => 'http://gems.github.com'
+  # config.gem 'mislav-will_paginate', :lib => 'will_paginate', :source => 'http://gems.github.com' # the standard one seems to work now
+  config.gem 'will_paginate'
   config.gem "progressbar"
   config.gem "bio"
   config.gem "acts_as_ferret"
   config.gem 'ferret'
-  config.gem 'described_routes'
+  config.gem 'described_routes', :version => '=0.5.1'
 #  config.gem 'json', :version => '>= 1.1.6' # most likely not used
   
   # load mirmaid plugin gems
