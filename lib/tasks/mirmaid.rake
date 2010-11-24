@@ -195,9 +195,13 @@ namespace :mirmaid do
           system("cat #{f} | #{psql} -c \'copy #{table} from stdin\'") or raise ("Error loading miRBase data: " + $!.to_s)
         end
       when "sqlite3"
-        system("cat #{mirbase_data_dir}tables.sql | #{sed} | #{RAILS_ROOT}/script/mysql_to_postgres.rb > #{mirbase_data_dir}/sqlite_tables.sql") or
-          raise("Error reading table definitions: " + $?)
-        system("sqlite3 -init #{mirbase_data_dir}/sqlite_tables.sql #{database} '.exit'") or raise("sqlite3 table definitions error: " + $!.to_s)
+      	if !system("sqlite3 --version > /dev/null") then
+	   raise("Error, sqlite3 not available") # check that sqlite3 is available
+	end	   
+      	cmd = "cat #{mirbase_data_dir}tables.sql | #{sed} | #{RAILS_ROOT}/script/mysql_to_postgres.rb > #{mirbase_data_dir}/sqlite_tables.sql"
+        system(cmd)
+	cmd = "sqlite3 -init #{mirbase_data_dir}/sqlite_tables.sql #{database} '.exit'"
+        system(cmd)
         sqlite_data_script = File.new("#{mirbase_data_dir}/sqlite_data.script","w")
         sqlite_data_script.puts ".separator '\t'"
         Dir["#{mirbase_data_dir}*.txt"].each do |f|

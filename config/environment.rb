@@ -5,7 +5,7 @@
 ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.3.5' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.3.10' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -24,14 +24,15 @@ Rails::Initializer.run do |config|
   # They can then be installed with "rake gems:install" on new installations.
   # You have to specify the :lib option for libraries, where the Gem
   # name (sqlite3-ruby) differs from the file itself (sqlite3)
-  config.gem 'rubaidh-google_analytics', :version => '~> 1.1.4', :lib => 'rubaidh/google_analytics', :source => 'http://gems.github.com'
-  config.gem 'mislav-will_paginate', :version => '~> 2.3.8', :lib => 'will_paginate', :source => 'http://gems.github.com'
+  config.gem 'described_routes', :version => '~> 0.5.1' # 0.8.x gem is now available ... 
+
+  config.gem 'google_analytics', :version => '= 1.1.5'
+  
+  config.gem 'will_paginate', :version => '~> 2.3.15'
   config.gem "progressbar"
   config.gem "bio", :version => '~> 1.3.0'
-  config.gem "acts_as_ferret", :version => '~> 0.4.4'
-  config.gem 'ferret', :version => '= 0.11.6'
-  config.gem 'described_routes', :version => '~> 0.5.1'
-#  config.gem 'json', :version => '>= 1.1.6' # most likely not used
+  config.gem "acts_as_ferret", :version => '~> 0.4.8'
+  #config.gem 'ferret', :version => '= 0.11.6'
   
   # load mirmaid plugin gems
   # eval(IO.read("#{RAILS_ROOT}/config/mirmaid_plugins.rb"))
