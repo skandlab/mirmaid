@@ -2,7 +2,7 @@ require 'net/http'
 require 'uri'
 require 'rubygems'
 require 'progressbar'
-require 'ftools'
+# require 'ftools'
 
 mirbase_table_files = ['mirna_mature.txt',
                        'literature_references.txt',
